@@ -50,7 +50,11 @@ class LoginController extends Controller
                       ->first();
 
         if ($login && Hash::check($request->senha, $login->senha)) {
-            Session::put('usuario', $login->id);
+            Session::put('usuario', [
+                'id' => $login->id,
+                'email' => $login->email,
+                'cnpj' => $login->cnpj
+            ]);
             return redirect()->route('dashboard');
         }
 

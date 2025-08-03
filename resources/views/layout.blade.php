@@ -7,20 +7,33 @@
     
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- CSS do menu -->
+
+    <!-- CSS do menu lateral -->
     <link href="{{ asset('css/menu.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div class="d-flex">
-        @include('components.menu')
+    @if (session()->has('usuario'))
+        <!-- Menu horizontal superior -->
+        @include('components.header')
 
-        <div class="container-fluid p-4" style="margin-left: 250px;">
+        <div class="d-flex">
+            <!-- Menu lateral fixo -->
+            @include('components.menu')
+
+            <!-- Conteúdo principal -->
+            <div class="container-fluid p-4 main-content">
+                @yield('conteudo')
+            </div>
+        </div>
+    @else
+        <!-- Tela sem menus (ex: login) -->
+        <div class="container mt-5">
             @yield('conteudo')
         </div>
-    </div>
+    @endif
 
+    <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('js/menu.js') }}"></script>
-    
 </body>
 </html>
