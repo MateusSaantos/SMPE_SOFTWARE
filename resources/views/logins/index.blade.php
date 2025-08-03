@@ -11,10 +11,24 @@
 
 <form action="{{ route('login') }}" method="POST">
     @csrf
-    <input type="text" name="cnpj" class="form-control mb-2" placeholder="CNPJ" required>
-    <input type="email" name="email" class="form-control mb-2" placeholder="Email" required>
-    <input type="password" name="senha" class="form-control mb-2" placeholder="Senha" required>
+
+    <div class="mb-2">
+        <label for="cnpj">CNPJ</label>
+        <input type="text" id="cnpj" name="cnpj" class="form-control" placeholder="CNPJ" required>
+    </div>
+
+    <div class="mb-2">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email" class="form-control" placeholder="Email" required>
+    </div>
+
+    <div class="mb-2">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" name="senha" class="form-control" placeholder="Senha" required>
+    </div>
+
     <button type="submit" class="btn btn-primary">Entrar</button>
+    
 </form>
 
 <div class="mt-3">

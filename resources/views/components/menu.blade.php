@@ -8,7 +8,7 @@
         </li>
         <li class="has-submenu">Empresa
             <ul class="submenu">
-                <li><a href="{{ route('logins.create') }}">Login</a></li>
+                <li><a href="{{ route('logins.create') }}">Criar usuário</a></li>
                 <li><a href="#">Educativo</a></li>
             </ul>
         </li>
