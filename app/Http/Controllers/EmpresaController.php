@@ -47,7 +47,7 @@ class EmpresaController extends Controller
             'cep', 'uf', 'cidade', 'bairro', 'numero', 'logradouro', 'complemento'
         ]));
 
-        Empresa::create(array_merge(
+        $empresa = Empresa::create(array_merge(
             $request->only([
                 'cnpj', 'razao_social', 'nome_fantasia', 'telefone', 'inscricao_estadual',
                 'data_abertura', 'porte', 'email', 'regime_tributario', 'cnae', 'optante_mei', 'status'
@@ -55,7 +55,8 @@ class EmpresaController extends Controller
             ['endereco_id' => $endereco->id]
         ));
 
-        return redirect()->route('empresas.index')->with('success', 'Empresa criada com sucesso.');
+        // Redireciona para criação de login com o CNPJ já preenchido
+        return redirect()->route('logins.create', ['cnpj' => $empresa->cnpj]);
     }
 
     public function edit($cnpj)
