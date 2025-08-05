@@ -1,4 +1,5 @@
 <?php
+//Controle de login de usuarios
 
 namespace App\Http\Controllers;
 
@@ -8,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
-{
+{   
     public function showLoginForm()
     {
         return view('logins.index');

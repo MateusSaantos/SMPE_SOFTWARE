@@ -9,21 +9,15 @@ Route::get('/', function () {
     return redirect()->route('login.form');
 });
 
-// Rotas públicas (sem login)
+// Rotas de login
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login.form');
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('dashboard');
 
-// Rotas protegidas por autenticação
-Route::middleware(['autenticar'])->group(function () {
+// Rotas para criação de conta (login) após criar empresa
+Route::get('/logins/create', [LoginController::class, 'create'])->name('logins.create');
+Route::post('/logins', [LoginController::class, 'store'])->name('logins.store');
 
-    // Dashboard
-    Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('dashboard');
-
-    // Rotas para criação de login (conta)
-    Route::get('/logins/create', [LoginController::class, 'create'])->name('logins.create');
-    Route::post('/logins', [LoginController::class, 'store'])->name('logins.store');
-
-    // CRUD de empresas
-    Route::resource('empresas', EmpresaController::class);
-});
+// CRUD de empresas
+Route::resource('empresas', EmpresaController::class);
