@@ -4,16 +4,13 @@ body {
     padding: 0;
 }
 
-.login-container {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
 .top-buttons {
+    position: absolute;  /* Fixa no topo da tela de login */
+    top: 1rem;
+    right: 1rem;
     display: flex;
     justify-content: flex-end;
-    padding: 1rem;
+    z-index: 10;         /* Garante que fica acima do restante */
 }
 
 .top-buttons a {
@@ -36,6 +33,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 60px;
 }
 
 .login-box {

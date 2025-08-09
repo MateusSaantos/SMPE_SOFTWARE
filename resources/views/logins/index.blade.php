@@ -5,7 +5,7 @@
 <!-- Importa o CSS separado -->
 <link rel="stylesheet" href="{{ asset('css/login.css') }}">
 
-<div class="login-container">
+<div class="">
 
     <!-- Botões no topo direito -->
     <div class="top-buttons">

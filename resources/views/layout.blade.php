@@ -13,13 +13,18 @@
 
     <!-- CSS do menu lateral -->
     <link href="{{ asset('css/menu.css') }}" rel="stylesheet">
+    <!-- CSS header -->
+    <link href="{{ asset('css/header.css') }}" rel="stylesheet">
     <!-- CSS login -->
     <link href="{{ asset('css/login.css') }}" rel="stylesheet">
 </head>
-<body>
+<body class="{{ session()->has('usuario') ? 'app-authenticated' : 'app-public' }}">
     @if (session()->has('usuario'))
         <!-- Menu horizontal superior -->
         @include('components.header')
+
+        <!-- Espaço para compensar o header fixo (só em telas logadas) -->
+        <div class="header-spacer"></div>
 
         <div class="d-flex">
             <!-- Menu lateral fixo -->

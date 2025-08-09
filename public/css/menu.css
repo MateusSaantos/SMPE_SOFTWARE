@@ -1,58 +1,53 @@
-/* Toggle hamburguer (mobile) */
-.menu-toggle {
-    display: none;
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    background: #4a6fdc;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 6px;
-    z-index: 1000;
-    cursor: pointer;
-}
+/* Base */
+body{ margin:0; font-family:'Segoe UI',sans-serif; background:#eef3ff; }
+.menu-container{ width:260px; height:100vh; position:fixed; top:0; left:0;
+  background:#eaf0ff; color:#1e3c72; padding-top:20px; overflow-y:auto;
+  box-shadow:2px 0 8px rgba(0,0,0,.05); border-right:1px solid #d5e4ff; }
+.menu-header{ text-align:center; font-size:1.2rem; font-weight:700; margin-bottom:20px; color:#1e4b8c; }
+.menu-container ul{ list-style:none; padding:0; margin:0; }
 
-/* Submenu com animação */
-.submenu {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out;
+/* 1º nível */
+.menu-container > ul > li{ padding:0; }
+.menu-item-top{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:12px 20px; cursor:pointer; transition:background .2s ease;
+  font-size:.95rem; font-weight:700; color:#1e3c72;
 }
+.menu-item-top:hover{ background:#d5e4ff; }
 
-li.active .submenu {
-    max-height: 500px;
-    transition: max-height 0.4s ease-in;
+.menu-item-label{ display:flex; align-items:center; gap:8px; min-width:0; flex:1; }
+.menu-item-label i{ color:#3a5ea1; }
+.submenu-icon{ width:22px; display:flex; align-items:center; justify-content:flex-end;
+  color:#3a5ea1; flex-shrink:0; transition:transform .28s ease; }
+.has-submenu.active .submenu-icon{ transform:rotate(180deg); }
+
+/* Submenu (abaixo, com animação) */
+.submenu{
+  background:transparent; border-left:2px solid #bcd4ff; margin-left:4px;
+  padding:4px 0 6px 0; max-height:0; overflow:hidden; transition:max-height .35s ease;
 }
+.has-submenu.active > .submenu{ max-height:500px; }
 
-/* Ícone seta rotacionando */
-.submenu-icon {
-    float: right;
-    transition: transform 0.3s ease;
+.submenu li{ padding:6px 16px 6px 28px; font-size:.90rem; font-weight:400; }
+.submenu li a{
+  color:#1e3c72; text-decoration:none; display:flex; align-items:center; gap:8px;
+  padding:8px 10px; border-radius:6px; transition:background .2s ease, color .2s ease;
 }
+.submenu li a:hover{ background:#cfdfff; color:#0d2f66; text-decoration:none; }
 
-li.active .submenu-icon {
-    transform: rotate(180deg);
+/* Conteúdo principal */
+.main-content{ margin-left:260px; padding:24px; background:#eef3ff; }
+
+/* Hamburger (somente mobile) */
+.menu-toggle{
+  display:none; position:fixed; top:15px; left:15px; z-index:1000;
+  background:#4a6fdc; color:#fff; border:0; padding:8px 12px; border-radius:6px; cursor:pointer;
 }
 
 /* Responsivo */
-@media (max-width: 768px) {
-    .menu-container {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-        position: fixed;
-        z-index: 999;
-    }
-
-    .menu-container.show {
-        transform: translateX(0);
-    }
-
-    .menu-toggle {
-        display: block;
-    }
-
-    .main-content {
-        margin-left: 0;
-    }
+@media (max-width:768px){
+  .menu-toggle{ display:block; }
+  .menu-container{ transform:translateX(-100%); transition:transform .3s ease; z-index:999; }
+  .menu-container.show{ transform:translateX(0); }
+  .main-content{ margin-left:0; }
 }

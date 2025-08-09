@@ -1,19 +1,16 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const submenuItems = document.querySelectorAll('.has-submenu');
-    const menuToggle = document.getElementById('menu-toggle');
-    const sidebarMenu = document.getElementById('sidebarMenu');
-
-    // Toggle submenu (abre e fecha)
-    submenuItems.forEach(item => {
-        item.addEventListener('click', function () {
-            this.classList.toggle('active');
-        });
-    });
-
-    // Toggle menu (mobile)
-    if (menuToggle && sidebarMenu) {
-        menuToggle.addEventListener('click', () => {
-            sidebarMenu.classList.toggle('show');
-        });
+document.addEventListener('DOMContentLoaded', () => {
+  // abre/fecha submenus
+  document.querySelectorAll('.has-submenu').forEach(li => {
+    const top = li.querySelector('.menu-item-top');
+    if (top) {
+      top.addEventListener('click', () => li.classList.toggle('active'));
     }
+  });
+
+  // hamburger (mobile)
+  const btn = document.getElementById('menu-toggle');
+  const menu = document.getElementById('sidebarMenu');
+  if (btn && menu) {
+    btn.addEventListener('click', () => menu.classList.toggle('show'));
+  }
 });
