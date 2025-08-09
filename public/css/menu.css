@@ -1,77 +1,55 @@
-/* public/css/menu.css */
-
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-}
-
-.menu-container {
-    display: flex;
-    flex-direction: column;
-    width: 250px;
-    background-color: #212529;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    color: white;
-    padding-top: 60px; /* espaço para o header */
-    overflow-y: auto;
-}
-
-.menu-container ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-.menu-container li {
-    padding: 12px 20px;
-    cursor: pointer;
-    color: white;
-    transition: background 0.3s ease;
-}
-
-.menu-container li:hover {
-    background-color: #343a40;
-}
-
-.menu-container li ul {
+/* Toggle hamburguer (mobile) */
+.menu-toggle {
     display: none;
-    flex-direction: column;
-    background-color: #343a40;
-}
-
-.menu-container li ul li {
-    padding: 10px 30px;
-    font-size: 0.9rem;
-}
-
-.menu-container li.active > ul {
-    display: flex;
-}
-
-.menu-container a {
-    text-decoration: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background: #4a6fdc;
     color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    z-index: 1000;
+    cursor: pointer;
 }
 
-.menu-container a:hover {
-    text-decoration: underline;
+/* Submenu com animação */
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
 }
 
-.main-content {
-    margin-left: 250px;
-    padding: 20px;
+li.active .submenu {
+    max-height: 500px;
+    transition: max-height 0.4s ease-in;
+}
+
+/* Ícone seta rotacionando */
+.submenu-icon {
+    float: right;
+    transition: transform 0.3s ease;
+}
+
+li.active .submenu-icon {
+    transform: rotate(180deg);
 }
 
 /* Responsivo */
 @media (max-width: 768px) {
     .menu-container {
-        position: relative;
-        width: 100%;
-        height: auto;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        position: fixed;
+        z-index: 999;
+    }
+
+    .menu-container.show {
+        transform: translateX(0);
+    }
+
+    .menu-toggle {
+        display: block;
     }
 
     .main-content {
