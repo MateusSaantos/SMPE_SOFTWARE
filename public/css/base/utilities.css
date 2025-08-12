@@ -1,0 +1,11 @@
+/* Global resets/utilities (kept minimal) */
+html,body{margin:0;padding:0;}
+body{background:var(--bg-page);font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif;}
+.app-authenticated .header-spacer{height:var(--header-h);} /* compensate fixed header */
+.app-public .header-spacer{height:0;}
+/* Helpers */
+.u-shadow-sm{box-shadow:var(--shadow-sm);}
+.u-shadow-md{box-shadow:var(--shadow-md);}
+.u-rounded-6{border-radius:var(--radius-6);}
+.u-rounded-8{border-radius:var(--radius-8);}
+.u-rounded-12{border-radius:var(--radius-12);}

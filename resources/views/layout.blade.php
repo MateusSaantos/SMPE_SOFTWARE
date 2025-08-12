@@ -4,46 +4,56 @@
     <meta charset="UTF-8">
     <title>SMPE Software</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Icones -->
+    {{-- Bootstrap + ícones (CDN) --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <!-- CSS do menu lateral -->
-    <link href="{{ asset('css/menu.css') }}" rel="stylesheet">
-    <!-- CSS header -->
-    <link href="{{ asset('css/header.css') }}" rel="stylesheet">
-    <!-- CSS login -->
-    <link href="{{ asset('css/login.css') }}" rel="stylesheet">
+    {{-- Base (tokens + utilitários) --}}
+    <link href="{{ asset('css/base/variables.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/base/utilities.css') }}" rel="stylesheet">
+
+    @if (session()->has('usuario'))
+        {{-- Componentes compartilhados (somente quando autenticado) --}}
+        <link href="{{ asset('css/components/header.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/components/menu.css') }}" rel="stylesheet">
+    @endif
+
+    {{-- CSS específico de página (ex.: login.css) --}}
+    @stack('styles')
 </head>
+
 <body class="{{ session()->has('usuario') ? 'app-authenticated' : 'app-public' }}">
     @if (session()->has('usuario'))
-        <!-- Menu horizontal superior -->
+        {{-- Header fixo --}}
         @include('components.header')
 
-        <!-- Espaço para compensar o header fixo (só em telas logadas) -->
+        {{-- Espaço para compensar o header fixo (altura controlada no CSS) --}}
         <div class="header-spacer"></div>
 
         <div class="d-flex">
-            <!-- Menu lateral fixo -->
+            {{-- Menu lateral fixo --}}
             @include('components.menu')
 
-            <!-- Conteúdo principal -->
-            <div class="container-fluid p-4 main-content">
+            {{-- Conteúdo principal --}}
+            <main class="container-fluid p-4 main-content">
                 @yield('conteudo')
-            </div>
+            </main>
         </div>
     @else
-        <!-- Tela sem menus (ex: login) -->
-        <div class="container mt-5">
+        {{-- Tela pública (ex.: login) --}}
+        <main class="container mt-5">
             @yield('conteudo')
-        </div>
+        </main>
     @endif
 
-    <!-- JS -->
+    {{-- JS --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('js/menu.js') }}"></script>
+
+    @if (session()->has('usuario'))
+        <script src="{{ asset('js/menu.js') }}" defer></script>
+    @endif
+
+    @stack('scripts')
 </body>
 </html>

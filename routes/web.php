@@ -25,10 +25,14 @@ Route::group([
     Route::post('/login', [LoginController::class, 'login'])->name('login');
 });
 
-// Logout
+// Rotas de criação de login (conta) DEVEM ser públicas
+Route::get('/logins/create', [LoginController::class, 'create'])->name('logins.create');
+Route::post('/logins', [LoginController::class, 'store'])->name('logins.store');
+
+// Logout (pode deixar GET por enquanto; em produção prefira POST)
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// CRUD de empresas — acesso público
+// CRUD de empresas — público (como você já queria)
 Route::resource('empresas', EmpresaController::class);
 
 // Rotas protegidas por sessão "usuario"
@@ -45,7 +49,5 @@ Route::group([
     // Dashboard
     Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('dashboard');
 
-    // Rotas para criação de login (conta)
-    Route::get('/logins/create', [LoginController::class, 'create'])->name('logins.create');
-    Route::post('/logins', [LoginController::class, 'store'])->name('logins.store');
+    // (demais rotas internas que exigem usuário logado...)
 });
