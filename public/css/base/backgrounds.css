@@ -7,7 +7,7 @@
     180deg,
     #ffffff 0%,
     #b494e3 50%, /* tom intermediário para suavizar */
-    #6f42c1 100%
+    #6f42c1 100% /* roxo final */
   );
 }
 
@@ -21,18 +21,39 @@
   height: 200px;
   background: radial-gradient(
     ellipse at bottom center,
-    rgba(255,255,255,0.25) 0%,
+    rgba(255, 255, 255, 0.25) 0%,
     transparent 70%
   );
   pointer-events: none;
 }
 
-/* Telas autenticadas: branco → cinza-azulado */
+/* Telas autenticadas: gradiente branco → roxo */
 .app-authenticated {
   min-height: 100vh;
   background: linear-gradient(
     180deg,
-    #ffffff 0%,
-    var(--bg-page, #eef3ff) 100%
+    #ffffff 0%,   /* Branco */
+    #b494e3 50%,   /* Transição suave para o roxo */
+    #6f42c1 100%   /* Roxo final */
   );
+}
+
+/* Camada de brilho no rodapé */
+.app-authenticated::before {
+  content: "";
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: radial-gradient(
+    ellipse at bottom center,
+    rgba(255, 255, 255, 0.25) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.main-content {
+  padding: 2rem;  /* Ajuste do padding para a área principal */
 }

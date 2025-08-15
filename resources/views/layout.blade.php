@@ -12,6 +12,8 @@
     {{-- Base (tokens + utilitários) --}}
     <link href="{{ asset('css/base/variables.css') }}" rel="stylesheet">
     <link href="{{ asset('css/base/utilities.css') }}" rel="stylesheet">
+
+    {{-- CSS de fundo global --}}
     <link href="{{ asset('css/base/backgrounds.css') }}" rel="stylesheet">
 
     @if (session()->has('usuario'))
@@ -20,7 +22,7 @@
         <link href="{{ asset('css/components/menu.css') }}" rel="stylesheet">
     @endif
 
-    {{-- CSS específico de página (ex.: login.css) --}}
+    {{-- CSS específico de página --}}
     @stack('styles')
 </head>
 
@@ -37,7 +39,7 @@
             @include('components.menu')
 
             {{-- Conteúdo principal --}}
-            <main class="container-fluid p-4 main-content">
+            <main>
                 @yield('conteudo')
             </main>
         </div>

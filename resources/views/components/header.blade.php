@@ -1,7 +1,7 @@
 <!-- resources/views/components/header.blade.php -->
 <nav class="navbar fixed-top topbar">
     <div class="container-fluid d-flex justify-content-between align-items-center">
-        <span class="navbar-brand mb-0 h1">SMPE Software</span>
+        <span class="navbar-brand mb-0 h1">SeuSistema | Gestão</span>
 
         @if ($usuario)
             <div class="dropdown">

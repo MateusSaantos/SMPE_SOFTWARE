@@ -1,36 +1,49 @@
-/* Header (topbar) */
-.topbar{
-  background:var(--bg-soft);
-  border-bottom:1px solid var(--line-soft);
-  box-shadow:var(--shadow-sm);
-  height:var(--header-h);
+/* ===== Header (topbar) ===== */
+.topbar {
+  background: #ffffff; /* Fundo branco para o header */
+  border-bottom: 1px solid var(--line-soft);
+  box-shadow: var(--shadow-sm);
+  height: var(--header-h);
 }
-.topbar .navbar-brand{font-weight:700;color:var(--brand-500);}
 
-/* User button */
-.topbar .btn-user{
-  background:#fff;
-  border:1px solid var(--line-soft);
-  border-radius:var(--radius-pill);
-  color:var(--brand-500);
-  font-weight:500;
-  padding:6px 14px;
+/* Logo do brand */
+.topbar .navbar-brand {
+  font-weight: 700;
+  color: #6f42c1; /* Cor roxa para o logo */
 }
-.topbar .btn-user:hover{
-  background:var(--bg-soft-2);
-  border-color:#c0d3ff;
-  color:var(--brand-600);
-}
-.topbar .btn-user i{font-size:1.2rem;}
 
-/* Dropdown (scoped to header to avoid global impact) */
-.topbar .dropdown-menu{
-  border-radius:var(--radius-8);
-  padding:6px 0;
+/* Botão de usuário */
+.topbar .btn-user {
+  background: #6f42c1; /* Cor de fundo roxa */
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-pill);
+  color: #fff; /* Texto branco */
+  font-weight: 500;
+  padding: 6px 14px;
 }
-.topbar .dropdown-menu a{
-  font-size:.9rem;
-  display:flex;
-  align-items:center;
+
+.topbar .btn-user:hover {
+  background: #557ac5; /* Cor de hover mais clara para o botão */
+  border-color: #184fcf;
+  color: #fff;
 }
-.topbar .dropdown-menu a i{font-size:1rem;}
+
+.topbar .btn-user i {
+  font-size: 1.2rem;
+}
+
+/* Dropdown */
+.topbar .dropdown-menu {
+  border-radius: var(--radius-8);
+  padding: 6px 0;
+}
+
+.topbar .dropdown-menu a {
+  font-size: .9rem;
+  display: flex;
+  align-items: center;
+}
+
+.topbar .dropdown-menu a i {
+  font-size: 1rem;
+}

@@ -29,7 +29,7 @@
     </button>
   </div>
 
-  {{-- Balão fixo (coachmark) que pode ser fechado --}}
+  {{-- Balão fixo (coachmark) que não pode ser fechado --}}
   <div class="hint-bubble" id="hint-criar-login" role="status" aria-live="polite">
     <div class="d-flex align-items-start gap-2">
       <i class="fa-regular fa-circle-question hint-bubble__icon mt-1"></i>
@@ -37,7 +37,7 @@
         <strong>Crie o login para acessar o sistema</strong><br>
         O login fica <u>vinculado ao CNPJ</u> acima. Use um e-mail válido e uma senha forte (mín. 8 caracteres, misture letras e números).
       </div>
-      <button type="button" class="btn btn-sm btn-outline-secondary hint-bubble__close" id="hint-close">Entendi</button>
+      <button type="button" class="btn btn-sm btn-outline-secondary hint-bubble__close" id="hint-close" style="display: none;">Entendi</button>
     </div>
     <span class="hint-bubble__arrow"></span>
   </div>
@@ -129,9 +129,6 @@
       </div>
 
       <div class="card-footer d-flex justify-content-end gap-2">
-        <a href="{{ url()->previous() }}" class="btn btn-outline-secondary">
-          <i class="fa-solid fa-arrow-left"></i> Voltar
-        </a>
         <button type="submit" class="btn btn-primary">
           <i class="fa-solid fa-user-plus"></i> Criar Login
         </button>
@@ -147,19 +144,10 @@
     new bootstrap.Popover(el, { trigger: 'focus' });
   });
 
-  // Coachmark com localStorage
+  // Coachmark fixo (não pode ser fechado)
   (function(){
-    const key = 'loginCoachSeen';
     const bubble = document.getElementById('hint-criar-login');
-    const closeBtn = document.getElementById('hint-close');
-
-    if (localStorage.getItem(key) === '1') {
-      bubble?.classList.add('d-none');
-    }
-    closeBtn?.addEventListener('click', () => {
-      bubble?.classList.add('d-none');
-      localStorage.setItem(key, '1');
-    });
+    bubble?.classList.remove('d-none'); // Garante que o balão não será fechado
   })();
 
   // Mostrar/Ocultar senha

@@ -150,9 +150,6 @@
   </div>
 
   <div class="card-footer d-flex justify-content-end gap-2">
-    <a href="{{ route('empresas.index') }}" class="btn btn-outline-secondary">
-      <i class="fa-solid fa-arrow-left"></i> Voltar
-    </a>
     <button type="submit" class="btn btn-primary">
       <i class="fa-solid fa-floppy-disk"></i> {{ isset($empresa) ? 'Salvar alterações' : 'Salvar e continuar' }}
     </button>

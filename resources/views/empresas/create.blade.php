@@ -27,7 +27,7 @@
     </button>
   </div>
 
-  {{-- Balão fixo (coachmark) que pode ser fechado --}}
+  {{-- Balão fixo (coachmark) que não pode ser fechado --}}
   <div class="hint-bubble" id="hint-cadastro-empresa" role="status" aria-live="polite">
     <div class="d-flex align-items-start gap-2">
       <i class="fa-regular fa-circle-question hint-bubble__icon mt-1"></i>
@@ -35,7 +35,7 @@
         <strong>Você está cadastrando sua empresa</strong><br>
         Preencha os campos obrigatórios. Ao salvar, o sistema habilita a criação do <em>login</em> vinculado ao CNPJ.
       </div>
-      <button type="button" class="btn btn-sm btn-outline-secondary hint-bubble__close" id="hint-close">Entendi</button>
+      <button type="button" class="btn btn-sm btn-outline-secondary hint-bubble__close" id="hint-close" style="display: none;">Entendi</button> <!-- Removido o fechamento -->
     </div>
     <span class="hint-bubble__arrow"></span>
   </div>
@@ -64,19 +64,10 @@
     new bootstrap.Popover(el, { trigger: 'focus' });
   });
 
-  // Controla exibição do balão
+  // Coachmark fixo (não pode ser fechado)
   (function(){
-    const key = 'empresaCoachSeen';
     const bubble = document.getElementById('hint-cadastro-empresa');
-    const closeBtn = document.getElementById('hint-close');
-
-    if (localStorage.getItem(key) === '1') {
-      bubble?.classList.add('d-none');
-    }
-    closeBtn?.addEventListener('click', function () {
-      bubble?.classList.add('d-none');
-      localStorage.setItem(key, '1');
-    });
+    bubble?.classList.remove('d-none'); // Garante que o balão não será fechado
   })();
 
   // Validação Bootstrap
