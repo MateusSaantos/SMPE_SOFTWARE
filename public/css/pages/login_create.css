@@ -1,0 +1,27 @@
+/* Cabeçalho da página (mesma base do create de empresa) */
+.page-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.page-head__left{display:flex;align-items:center;gap:10px}
+.page-head__icon{font-size:28px;color:var(--brand-500,#1e3c72)}
+.page-head__title{margin:0;font-size:1.375rem;font-weight:700}
+.page-head__subtitle{margin:0;font-size:.9375rem;color:#6b7280}
+.btn-help{border-radius:50px;padding:.4rem .75rem}
+
+/* Balão (coachmark) */
+.hint-bubble{position:relative;background:#fff;border:1px solid var(--line-soft,#d5e4ff);border-radius:12px;padding:12px 14px;margin-bottom:12px;box-shadow:var(--shadow-sm,0 2px 6px rgba(0,0,0,.05))}
+.hint-bubble__icon{font-size:18px;color:var(--brand-primary,#4a6fdc)}
+.hint-bubble__close{border-radius:50px;padding:4px 10px}
+.hint-bubble__arrow{position:absolute;top:-8px;left:24px;width:16px;height:16px;background:#fff;border-left:1px solid var(--line-soft,#d5e4ff);border-top:1px solid var(--line-soft,#d5e4ff);transform:rotate(45deg)}
+
+/* Card */
+.c-form{border:1px solid var(--line-soft,#d5e4ff);border-radius:12px}
+.c-form .card-header{background:var(--bg-soft,#eaf0ff);border-bottom:1px solid var(--line-soft,#d5e4ff)}
+
+/* Password meter */
+.password-meter{width:100%;height:8px;background:#eef3ff;border-radius:6px;overflow:hidden}
+.password-meter__bar{height:100%;width:0%;background:var(--brand-primary,#4a6fdc);transition:width .25s ease;border-radius:6px}
+.password-meter__bar[data-level="0"]{width:0%}
+.password-meter__bar[data-level="1"]{width:20%}
+.password-meter__bar[data-level="2"]{width:40%}
+.password-meter__bar[data-level="3"]{width:60%}
+.password-meter__bar[data-level="4"]{width:80%}
+.password-meter__bar[data-level="5"]{width:100%}

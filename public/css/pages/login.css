@@ -1,40 +1,90 @@
 /* Login page */
-body.app-public{ background:var(--bg-soft); }
-
-.top-buttons{
-  position:absolute; top:1rem; right:1rem;
-  display:flex; justify-content:flex-end; z-index:10;
-}
-.top-buttons a{
-  border-radius:var(--radius-12);
-  margin-left:.5rem;
-  border:1px solid #0d6efd;
-  color:#0d6efd;
-  background:#fff;
-  padding:.4rem 1rem;
-  text-decoration:none;
-  transition:.3s;
-}
-.top-buttons a:hover{ background:var(--bg-soft-2); }
-
-.fullscreen-box{
-  flex:1; display:flex; align-items:center; justify-content:center;
-  margin-top:var(--header-h);
+body.app-public {
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #b494e3 50%, /* transição suave */
+    #6f42c1 100%
+  );
 }
 
-.login-box{
-  width:90%; height:90%;
-  display:flex; overflow:hidden;
-  background:var(--bg-panel);
-  border-radius:var(--radius-8);
-  box-shadow:var(--shadow-md);
+/* Botões no topo */
+.top-buttons {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  z-index: 10;
 }
-.login-form{ flex:1; padding:3rem; }
-.login-form h2{ color:#6f42c1; font-weight:700; text-align:center; margin-bottom:1rem; }
+.top-buttons a {
+  border-radius: var(--radius-12);
+  margin-left: .5rem;
+  border: 1px solid #6f42c1;
+  color: #6f42c1;
+  background: #fff;
+  padding: .4rem 1rem;
+  text-decoration: none;
+  transition: all .3s ease;
+  font-weight: 500;
+}
+.top-buttons a:hover {
+  background: #f6f0ff; /* roxo bem clarinho */
+  color: #5b36a4;
+  border-color: #5b36a4;
+}
 
-.login-message{
-  flex:1;
-  background:linear-gradient(135deg,#4a90e2,#6a8dff);
-  color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center;
-  text-align:center; padding:2rem;
+/* Container central */
+.fullscreen-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: var(--header-h);
+}
+
+/* Caixa principal */
+.login-box {
+  width: 90%;
+  height: 90%;
+  display: flex;
+  overflow: hidden;
+  background: var(--bg-panel);
+  border-radius: var(--radius-8);
+  box-shadow: var(--shadow-md);
+  border: 2px solid rgba(111, 66, 193, 0.08); /* detalhe sutil roxo */
+}
+
+/* Formulário */
+.login-form {
+  flex: 1;
+  padding: 3rem;
+}
+.login-form h2 {
+  /* já mantido como você pediu */
+  color: #6f42c1;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Mensagem lateral */
+.login-message {
+  flex: 1;
+  background: linear-gradient(135deg, #6f42c1, #8c63d9);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+}
+.login-message h3 {
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.login-message p {
+  opacity: 0.9;
+  max-width: 90%;
 }

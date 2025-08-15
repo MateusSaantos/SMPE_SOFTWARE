@@ -12,6 +12,7 @@
     {{-- Base (tokens + utilitários) --}}
     <link href="{{ asset('css/base/variables.css') }}" rel="stylesheet">
     <link href="{{ asset('css/base/utilities.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/base/backgrounds.css') }}" rel="stylesheet">
 
     @if (session()->has('usuario'))
         {{-- Componentes compartilhados (somente quando autenticado) --}}

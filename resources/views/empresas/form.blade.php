@@ -1,7 +1,3 @@
-@push('styles')
-<link href="{{ asset('css/pages/empresa-form.css') }}" rel="stylesheet">
-@endpush
-
 <div class="card shadow-sm c-form">
   <div class="card-header d-flex align-items-center justify-content-between">
     <div class="d-flex align-items-center gap-2">
