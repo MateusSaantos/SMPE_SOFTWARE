@@ -8,6 +8,7 @@
   --line-strong: #cbd5e1;
   --radius-6: 6px;
   --bg-page: transparent; /* deixar main transparente para o gradiente aparecer */
+  --content-max: 1200px;  /* largura máxima padrão */
 }
 
 /* SIDEBAR FIXA (desktop), abaixo do header */
@@ -110,13 +111,22 @@
   text-decoration: none;
 }
 
-/* ===== MAIN: desloca ao lado da sidebar e mantém o background ===== */
-.app-authenticated .d-flex > main,
-.app-public .d-flex > main{
-  margin-left: var(--sidebar-w);   /* espaço da sidebar */
-  padding: 24px;
-  background: transparent;         /* NÃO cobre o gradiente do body */
+/* ===== MAIN: ocupa espaço restante e respeita sidebar ===== */
+#app-main {
+  flex: 1 1 auto;                  /* cresce e encolhe */
   min-width: 0;                    /* evita overflow horizontal */
+  width: 80%;                     /* pega toda largura livre */
+  margin-left: var(--sidebar-w);   /* espaço da sidebar (desktop) */
+  padding: clamp(12px, 2vw, 24px); /* padding fluido */
+  background: transparent;         /* deixa aparecer o gradiente */
+}
+
+/* Limitador padrão para todas as telas */
+#app-main > .content-limiter {
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: clamp(8px, 2vw, 24px);
 }
 
 /* BOTÃO MOBILE */
@@ -131,26 +141,6 @@
   border: 0;
   padding: 8px 12px;
   border-radius: var(--radius-6);
-  cursor: button;
+  cursor: pointer;
 }
 
-/* ===== MOBILE: sidebar off-canvas, main ocupa largura total ===== */
-@media (max-width: 768px) {
-  .menu-toggle { display: block; }
-
-  .menu-container{
-    top: var(--header-h);
-    transform: translateX(-100%);
-    transition: transform .3s ease;
-    z-index: 999;
-    max-width: 80vw;
-    height: calc(100vh - var(--header-h));
-  }
-  .menu-container.show{ transform: translateX(0); }
-
-  .app-authenticated .d-flex > main,
-  .app-public .d-flex > main{
-    margin-left: 0;     /* sem offset no mobile */
-    padding: 16px;
-  }
-}

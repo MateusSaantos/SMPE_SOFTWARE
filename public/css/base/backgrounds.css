@@ -32,9 +32,10 @@
   min-height: 100vh;
   background: linear-gradient(
     180deg,
-    #ffffff 0%,   /* Branco */
-    #b494e3 50%,   /* Transição suave para o roxo */
-    #6f42c1 100%   /* Roxo final */
+    #ffffff 0%,
+    #ffffff 22%,   /* <- mantém branco puro até ~22% da tela */
+    #b494e3 60%,   /* transição suave começa depois */
+    #6f42c1 100%
   );
 }
 
