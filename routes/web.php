@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\FornecedorController;
 
 // Página inicial redireciona para login ou dashboard
 Route::get('/', function () {
@@ -53,6 +54,8 @@ Route::group([
     Route::get('/empresas/create-user/{cnpj?}', function ($cnpj = null) {
         return view('empresas.create_user', compact('cnpj'));
     })->name('empresas.create_user');
+
+    Route::resource('fornecedores', FornecedorController::class);
 
     // (demais rotas internas que exigem usuário logado...)
 });
