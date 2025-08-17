@@ -49,5 +49,10 @@ Route::group([
     // Dashboard
     Route::get('/dashboard', [LoginController::class, 'dashboard'])->name('dashboard');
 
+    // Empresas
+    Route::get('/empresas/create-user/{cnpj?}', function ($cnpj = null) {
+        return view('empresas.create_user', compact('cnpj'));
+    })->name('empresas.create_user');
+
     // (demais rotas internas que exigem usuário logado...)
 });

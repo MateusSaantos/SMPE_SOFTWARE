@@ -39,9 +39,10 @@
             @include('components.menu')
 
             {{-- Conteúdo principal --}}
-            <main>
+            <main id="app-main" class="app-main">
                 @yield('conteudo')
             </main>
+
         </div>
     @else
         {{-- Tela pública (ex.: login) --}}

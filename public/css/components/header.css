@@ -1,9 +1,25 @@
 /* ===== Header (topbar) ===== */
+
+/* (ADICIONADO) Fallbacks de tokens caso não venham de variables.css */
+:root{
+  --header-h: 56px;
+  --line-soft: #e5e7eb;
+  --radius-pill: 50px;
+  --radius-8: 8px;
+  --shadow-sm: 0 2px 6px rgba(0,0,0,.06);
+}
+
+/* (ADICIONADO) Spacer que compensa o header fixo no layout */
+.header-spacer{
+  height: var(--header-h);
+}
+
 .topbar {
   background: #ffffff; /* Fundo branco para o header */
   border-bottom: 1px solid var(--line-soft);
   box-shadow: var(--shadow-sm);
   height: var(--header-h);
+  z-index: 1000; /* (ADICIONADO) garante que fique acima da sidebar/conteúdo */
 }
 
 /* Logo do brand */

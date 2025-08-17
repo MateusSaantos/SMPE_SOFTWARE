@@ -1,8 +1,3 @@
-<!-- Botão hamburger (mobile) -->
-<button id="menu-toggle" class="menu-toggle" aria-label="Abrir menu">
-  <i class="fas fa-bars"></i>
-</button>
-
 @php
     // Garante que pega o CNPJ de forma segura (mesmo sendo array)
     $usuario = session('usuario');
@@ -10,7 +5,7 @@
 @endphp
 
 <aside class="menu-container" id="sidebarMenu">
-  <div class="menu-header">SMPE Software</div>
+  <div class="menu-header"></div>
 
   <ul>
     <!-- Cadastros -->
@@ -37,7 +32,7 @@
       </div>
       <ul class="submenu">
         <li>
-          <a href="{{ $cnpjLogado ? route('logins.create', ['cnpj' => $cnpjLogado]) : route('logins.create') }}">
+          <a href="{{ $cnpjLogado ? route('empresas.create_user', ['cnpj' => $cnpjLogado]) : route('empresas.create_user') }}">
             <i class="fas fa-user-plus"></i> Criar usuário
           </a>
         </li>
