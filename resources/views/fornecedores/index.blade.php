@@ -5,15 +5,12 @@
 @push('styles')
   <link href="{{ asset('css/pages/fornecedores_index.css') }}" rel="stylesheet">
   <link href="{{ asset('css/pages/fornecedores_create.css') }}" rel="stylesheet">
-  {{-- estilos do modal de confirmação (opcional, mas recomendado) --}}
+  {{-- estilos do modal de confirmação --}}
   <link href="{{ asset('css/components/confirm.css') }}" rel="stylesheet">
 @endpush
 
 <div class="container py-3 py-md-4">
   <div class="content-limiter">
-    @if(session('success'))
-      <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
 
     {{-- Cabeçalho --}}
     <div class="page-head">
@@ -47,6 +44,14 @@
       </div>
       <span class="hint-bubble__arrow"></span>
     </div>
+
+    {{-- ALERTAS (logo abaixo do balão) --}}
+    @if(session('success'))
+      <div class="alert alert-success mt-3">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+      <div class="alert alert-danger mt-3">{{ session('error') }}</div>
+    @endif
 
     {{-- Botão cadastrar abaixo do cabeçalho, quando houver registros --}}
     @if($fornecedores->count() >= 1)
