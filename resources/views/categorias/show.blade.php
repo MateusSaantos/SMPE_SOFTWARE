@@ -53,7 +53,7 @@
     <div class="card-body">
       <div class="row g-3">
         <div class="col-md-2">
-          <strong>Codigo:</strong><br>
+          <strong>Código:</strong><br>
           <span class="text-monospace">{{ $categoria->id }}</span>
         </div>
 

@@ -32,6 +32,12 @@
             <i class="fa-solid fa-tags"></i> Categorias de produtos
           </a>
         </li>
+
+        <li>
+          <a href="{{ route('ncms.index') }}">
+            <i class="fa-solid fa-barcode"></i> NCM
+          </a>
+        </li>
         
       </ul>
     </li>
