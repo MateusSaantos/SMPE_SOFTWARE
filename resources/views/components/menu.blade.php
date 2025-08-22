@@ -24,7 +24,9 @@
         </li>
 
         <li>
-          <a href="#"><i class="fas fa-box"></i> Produtos</a>
+          <a href="{{ route('produtos.index') }}">
+            <i class="fas fa-box"></i> Produtos
+          </a>
         </li>
 
         <li>

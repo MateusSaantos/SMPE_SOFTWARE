@@ -6,6 +6,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\FornecedorController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\NcmController;
+use App\Http\Controllers\ProdutoController;
 
 // Página inicial redireciona para login ou dashboard
 Route::get('/', function () {
@@ -62,6 +63,8 @@ Route::group([
     Route::resource('categorias', CategoriaController::class);
 
     Route::resource('ncms', NcmController::class);
+
+    Route::resource('produtos', ProdutoController::class);    
 
     // (demais rotas internas que exigem usuário logado...)
 
