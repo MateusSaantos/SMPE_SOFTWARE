@@ -1,0 +1,119 @@
+/* ===== Largura padronizada para TODAS as telas ===== */
+:root{
+  --content-max: 1040px;
+  --brand-500:#1e3c72;
+  --brand-600:#0d2f66;
+  --bg-soft:#f6f9ff;
+  --line-soft:#d5e4ff;
+  --shadow-sm:0 6px 18px rgba(0,0,0,.06);
+  --radius-8:12px;
+  --radius-12:16px;
+}
+.content-limiter{
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: 8px;
+}
+
+/* ===== Page head ===== */
+.page-head{
+  display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:12px;
+}
+.page-head__left{ display:flex; align-items:center; gap:12px; }
+.page-head__icon{ font-size:22px; color:var(--brand-600); opacity:.85; }
+
+/* ===== Busca moderna ===== */
+.input-search-modern .input-group-text{
+  border-top-left-radius: var(--radius-8);
+  border-bottom-left-radius: var(--radius-8);
+  background:#fff;
+}
+.input-search-modern .form-control{ border-left: none; }
+.input-search-modern .btn{
+  border-top-right-radius: var(--radius-8);
+  border-bottom-right-radius: var(--radius-8);
+}
+
+/* ===== Data card ===== */
+.data-card{
+  background:#fff;
+  border:1px solid var(--line-soft);
+  border-radius: var(--radius-12);
+  box-shadow: var(--shadow-sm);
+  overflow: visible;            /* permite conteúdos saírem do card */
+  width: 100%;
+}
+/* rolagem horizontal somente */
+.data-card .table-responsive{
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+.data-card--empty{
+  max-width: 100%; margin-inline:auto; min-height:200px;
+  display:flex; align-items:center; justify-content:center; padding:24px; border-radius:var(--radius-12);
+}
+
+/* ===== Estado vazio ===== */
+.empty-state{
+  border:1px dashed var(--line-soft);
+  border-radius: var(--radius-12);
+  padding:20px;
+  background: var(--bg-soft);
+  color:#667085;
+  display:flex; align-items:center; gap:12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.empty-state__icon{ font-size:22px; opacity:.7; }
+
+/* Utilitários */
+.text-mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+.nowrap{ white-space: nowrap; }
+
+/* ===== Toolbar "Visualizar: 10 25 50 100" ===== */
+.list-toolbar{
+  display:flex; align-items:center; gap:12px;
+  padding:10px 14px; color:#6b7280; font-size:.925rem;
+}
+.list-toolbar.border-top{ border-top:1px solid #eef1f6; }
+.list-toolbar .label{ color:#6b7280; }
+.size-link{
+  color:#6b7280; text-decoration:none; padding:2px 6px; border-radius:6px;
+}
+.size-link:hover{ background:#f3f4f6; }
+.size-link.is-active{ color:#111827; font-weight:600; background:#eef2f7; }
+
+/* ===== Tabela estilo "Hiper" ===== */
+.table-hiper{
+  width:100%; border-collapse:separate; border-spacing:0; font-size:.95rem;
+}
+.table-hiper thead th{
+  font-weight:600; color:#4b5563; background:#fafafa; border-bottom:1px solid #e6e9ef;
+  padding:10px 14px;
+}
+.table-hiper tbody td{
+  padding:12px 14px; border-bottom:1px solid #f0f2f6;
+}
+.table-hiper tbody tr:last-child td{ border-bottom:none; }
+
+/* Nome com link escuro */
+.name-link{ color:#111827; font-weight:600; text-decoration:none; }
+.name-link:hover{ text-decoration:underline; }
+
+/* ===== Ações como ícones (sem efeitos) ===== */
+.btn-group-actions{ display:inline-flex; gap:8px; }
+.btn-icon{
+  width:36px; height:36px; padding:0;
+  display:inline-flex; align-items:center; justify-content:center;
+  border:0; background:transparent; border-radius:10px;
+  transition: background .15s ease, transform .12s ease;
+  outline:none !important; box-shadow:none !important;
+}
+.btn-icon:hover{ background:#f3f4f6; transform: translateY(-1px); }
+.btn-icon:focus{ background:#eef2f7; outline:none; box-shadow:none; }
+.btn-icon:active{ transform:none; }
+.btn-icon.text-danger:hover{ background:#fff1f2; }
+
+/* (não usamos mais kebab/dropdown aqui) */

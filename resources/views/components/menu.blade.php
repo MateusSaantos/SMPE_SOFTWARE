@@ -26,6 +26,12 @@
         <li>
           <a href="#"><i class="fas fa-box"></i> Produtos</a>
         </li>
+
+        <li>
+          <a href="{{ route('categorias.index') }}">
+            <i class="fa-solid fa-tags"></i> Categorias de produtos
+          </a>
+        </li>
         
       </ul>
     </li>
