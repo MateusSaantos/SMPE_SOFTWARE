@@ -7,6 +7,8 @@ use App\Http\Controllers\FornecedorController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\NcmController;
 use App\Http\Controllers\ProdutoController;
+use App\Http\Controllers\NotaFiscalController;
+use App\Http\Controllers\NotaFiscalItemController;
 
 // Página inicial redireciona para login ou dashboard
 Route::get('/', function () {
@@ -64,7 +66,14 @@ Route::group([
 
     Route::resource('ncms', NcmController::class);
 
-    Route::resource('produtos', ProdutoController::class);    
+    Route::resource('produtos', ProdutoController::class);  
+    
+    Route::resource('notas', NotaFiscalController::class);
+
+    Route::get('notas/{nota}/itens', [NotaFiscalItemController::class, 'index'])->name('notas.itens');
+    Route::post('notas/{nota}/itens', [NotaFiscalItemController::class, 'store'])->name('notas.itens.store');
+    Route::put('notas/{nota}/itens/{item}', [NotaFiscalItemController::class, 'update'])->name('notas.itens.update');
+    Route::delete('notas/{nota}/itens/{item}', [NotaFiscalItemController::class, 'destroy'])->name('notas.itens.destroy');
 
     // (demais rotas internas que exigem usuário logado...)
 

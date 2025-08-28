@@ -71,8 +71,15 @@
         <span class="submenu-icon"><i class="fas fa-chevron-down"></i></span>
       </div>
       <ul class="submenu">
+
+      <li>
+        <a href="{{ route('notas.create') }}">
+          <i class="fas fa-keyboard"></i> Inserir nota manual
+        </a>
+      </li>
+      
         <li><a href="#"><i class="fas fa-file-import"></i> Importar XML</a></li>
-        <li><a href="#"><i class="fas fa-keyboard"></i> Inserir nota manual</a></li>
+        
       </ul>
     </li>
   </ul>
