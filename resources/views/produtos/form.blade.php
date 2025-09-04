@@ -11,7 +11,14 @@
   </div>
 
   <div class="card-body">
+    {{-- Dados do Produto --}}
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <i class="fa-solid fa-tags"></i>
+      <h5 class="m-0">Dados do Produto</h5>
+    </div>
+
     <div class="row g-3">
+      {{-- Descrição --}}
       <div class="col-md-6">
         <label class="form-label">Descrição</label>
         <input type="text"
@@ -20,9 +27,9 @@
                class="form-control"
                maxlength="255"
                required>
-        <div class="invalid-feedback">Informe a descrição.</div>
       </div>
 
+      {{-- Código de Barras --}}
       <div class="col-md-3">
         <label class="form-label">Código de Barras</label>
         <input type="text"
@@ -33,9 +40,9 @@
                inputmode="numeric"
                pattern="\d{8,14}">
         <div class="form-text">8 a 14 dígitos. Opcional.</div>
-        <div class="invalid-feedback">Informe 8–14 dígitos ou deixe em branco.</div>
       </div>
 
+      {{-- Unidade de Medida --}}
       <div class="col-md-3">
         <label class="form-label">Unidade de Medida</label>
         <select name="unidade_medida" class="form-select" required>
@@ -44,9 +51,9 @@
             <option value="{{ $opt }}" {{ $um === $opt ? 'selected' : '' }}>{{ $opt }}</option>
           @endforeach
         </select>
-        <div class="invalid-feedback">Selecione a unidade.</div>
       </div>
 
+      {{-- Categoria --}}
       <div class="col-md-6">
         <label class="form-label">Categoria do Produto</label>
         <select name="categoria_produto" class="form-select" required>
@@ -58,9 +65,9 @@
             </option>
           @endforeach
         </select>
-        <div class="invalid-feedback">Selecione a categoria.</div>
       </div>
 
+      {{-- NCM --}}
       <div class="col-md-6">
         <label class="form-label">NCM</label>
         <select name="ncm" class="form-select" required>
@@ -72,9 +79,9 @@
             </option>
           @endforeach
         </select>
-        <div class="invalid-feedback">Selecione o NCM.</div>
       </div>
 
+      {{-- CEST --}}
       <div class="col-md-3">
         <label class="form-label">CEST</label>
         <input type="text"
@@ -85,9 +92,9 @@
                inputmode="numeric"
                pattern="\d{7}">
         <div class="form-text">7 dígitos. Opcional.</div>
-        <div class="invalid-feedback">Informe 7 dígitos ou deixe em branco.</div>
       </div>
 
+      {{-- Margem de Lucro --}}
       <div class="col-md-3">
         <label class="form-label">Margem de Lucro (%)</label>
         <input type="text"
@@ -95,9 +102,9 @@
                value="{{ old('margem_lucro', $produto->margem_lucro ?? '0') }}"
                class="form-control text-mono js-decimal"
                inputmode="decimal">
-        <div class="invalid-feedback">Informe um número válido.</div>
       </div>
 
+      {{-- Preço de Custo --}}
       <div class="col-md-3">
         <label class="form-label">Preço de Custo (R$)</label>
         <input type="text"
@@ -106,9 +113,9 @@
                class="form-control text-end text-mono js-decimal"
                inputmode="decimal"
                required>
-        <div class="invalid-feedback">Informe o preço de custo.</div>
       </div>
 
+      {{-- Preço de Venda --}}
       <div class="col-md-3">
         <label class="form-label">Preço de Venda (R$)</label>
         <input type="text"
@@ -117,9 +124,19 @@
                class="form-control text-end text-mono js-decimal"
                inputmode="decimal"
                required>
-        <div class="invalid-feedback">Informe o preço de venda.</div>
       </div>
+    </div>
 
+    <hr class="my-4">
+
+    {{-- Tributação --}}
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <i class="fa-solid fa-file-invoice-dollar"></i>
+      <h5 class="m-0">Tributação</h5>
+    </div>
+
+    <div class="row g-3">
+      {{-- ICMS/PIS/COFINS --}}
       <div class="col-md-3">
         <label class="form-label">ICMS (%)</label>
         <input type="text"
@@ -147,6 +164,66 @@
                inputmode="decimal">
       </div>
 
+      {{-- Origem da Mercadoria --}}
+      <div class="col-md-3">
+        <label class="form-label">Origem da Mercadoria</label>
+        @php $origem = old('origem_mercadoria', $produto->origem_mercadoria ?? 0); @endphp
+        <select name="origem_mercadoria" class="form-select" required>
+          <option value="0" {{ (int)$origem===0 ? 'selected' : '' }}>0 — Nacional</option>
+          <option value="1" {{ (int)$origem===1 ? 'selected' : '' }}>1 — Estrangeira (Importação direta)</option>
+          <option value="2" {{ (int)$origem===2 ? 'selected' : '' }}>2 — Estrangeira (Mercado interno)</option>
+          <option value="3" {{ (int)$origem===3 ? 'selected' : '' }}>3 — Nacional, conteúdo importado 40–70%</option>
+          <option value="4" {{ (int)$origem===4 ? 'selected' : '' }}>4 — Nacional (processos básicos)</option>
+          <option value="5" {{ (int)$origem===5 ? 'selected' : '' }}>5 — Nacional, importado ≤ 40%</option>
+          <option value="6" {{ (int)$origem===6 ? 'selected' : '' }}>6 — Estrangeira (Importação sem similar)</option>
+          <option value="7" {{ (int)$origem===7 ? 'selected' : '' }}>7 — Estrangeira (Mercado interno, sem similar)</option>
+          <option value="8" {{ (int)$origem===8 ? 'selected' : '' }}>8 — Nacional, importado > 70%</option>
+        </select>
+      </div>
+
+      {{-- Alíquota IPI --}}
+      <div class="col-md-3">
+        <label class="form-label">Alíquota IPI (%)</label>
+        <input type="text"
+               name="aliquota_ipi"
+               value="{{ old('aliquota_ipi', $produto->aliquota_ipi ?? '0') }}"
+               class="form-control text-mono js-decimal"
+               inputmode="decimal">
+      </div>
+
+      {{-- Enquadramento IPI --}}
+      <div class="col-md-3">
+        <label class="form-label">Enquadramento IPI</label>
+        <input type="text"
+               name="ipi_enquadramento"
+               value="{{ old('ipi_enquadramento', $produto->ipi_enquadramento ?? '') }}"
+               class="form-control text-mono js-digits"
+               placeholder="Ex.: 999"
+               inputmode="numeric"
+               pattern="\d{1,3}">
+      </div>
+    </div>
+
+    <hr class="my-4">
+
+    {{-- Estoque & Status --}}
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <i class="fa-solid fa-warehouse"></i>
+      <h5 class="m-0">Estoque &amp; Status</h5>
+    </div>
+
+    <div class="row g-3">
+      {{-- Estoque Mínimo --}}
+      <div class="col-md-3">
+        <label class="form-label">Estoque Mínimo</label>
+        <input type="text"
+               name="estoque_minimo"
+               value="{{ old('estoque_minimo', $produto->estoque_minimo ?? '0') }}"
+               class="form-control text-end text-mono js-integer"
+               inputmode="numeric">
+      </div>
+
+      {{-- Estoque atual --}}
       <div class="col-md-3">
         <label class="form-label">Estoque</label>
         <input type="text"
@@ -155,9 +232,9 @@
                class="form-control text-end text-mono js-integer"
                inputmode="numeric"
                required>
-        <div class="invalid-feedback">Informe o estoque.</div>
       </div>
 
+      {{-- Ativo --}}
       <div class="col-md-3 d-flex align-items-end">
         <div class="form-check form-switch">
           @php $ativo = old('ativo', isset($produto) ? (int)$produto->ativo : 1); @endphp
@@ -181,21 +258,13 @@
 <script>
 (() => {
   'use strict';
-
-  // Validação e normalização
   const forms = document.querySelectorAll('.needs-validation');
-  const toDecimal = (v) => {
-    v = (v || '').toString().trim().replace(/\./g,'').replace(',', '.');
-    if (v === '') return '';
-    return v;
-  };
+  const toDecimal = (v) => (v || '').toString().trim().replace(/\./g,'').replace(',', '.') || '';
   const onlyDigits = (v) => (v || '').replace(/\D/g, '');
 
   Array.from(forms).forEach(form => {
     form.addEventListener('submit', event => {
-      // normaliza decimais
       form.querySelectorAll('.js-decimal').forEach(inp => { inp.value = toDecimal(inp.value); });
-      // inteiros e dígitos
       form.querySelectorAll('.js-integer').forEach(inp => { inp.value = onlyDigits(inp.value); });
       form.querySelectorAll('.js-digits').forEach(inp => { inp.value = onlyDigits(inp.value); });
 
@@ -207,7 +276,6 @@
     }, false);
   });
 
-  // máscaras suaves
   document.querySelectorAll('.js-integer').forEach(inp => {
     inp.addEventListener('input', () => inp.value = onlyDigits(inp.value));
   });

@@ -46,23 +46,29 @@ class ProdutoController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'descricao'        => 'required|string|max:255',
-            'codigo_barras'    => 'nullable|regex:/^\d{8,14}$/|unique:produtos,codigo_barras',
-            'categoria_produto'=> 'required|exists:categorias,id',
-            'margem_lucro'     => 'nullable|numeric|min:0|max:999.99',
-            'cest'             => 'nullable|regex:/^\d{7}$/',
-            'ncm'              => 'required|exists:ncms,id',
-            'unidade_medida'   => 'required|string|max:10',
-            'preco_custo'      => 'required|numeric|min:0|max:9999999999.99',
-            'preco_venda'      => 'required|numeric|min:0|max:9999999999.99',
-            'estoque'          => 'required|integer|min:0',
-            'icms'             => 'nullable|numeric|min:0|max:999.99',
-            'pis'              => 'nullable|numeric|min:0|max:999.99',
-            'cofins'           => 'nullable|numeric|min:0|max:999.99',
-            'ativo'            => 'nullable|boolean',
+            'descricao'         => 'required|string|max:255',
+            'codigo_barras'     => 'nullable|regex:/^\d{8,14}$/|unique:produtos,codigo_barras',
+            'categoria_produto' => 'required|exists:categorias,id',
+            'margem_lucro'      => 'nullable|numeric|min:0|max:999.99',
+            'cest'              => 'nullable|regex:/^\d{7}$/',
+            'ncm'               => 'required|exists:ncms,id',
+            'unidade_medida'    => 'required|string|max:10',
+            'preco_custo'       => 'required|numeric|min:0|max:9999999999.99',
+            'preco_venda'       => 'required|numeric|min:0|max:9999999999.99',
+            'estoque'           => 'required|integer|min:0',
+            'icms'              => 'nullable|numeric|min:0|max:999.99',
+            'pis'               => 'nullable|numeric|min:0|max:999.99',
+            'cofins'            => 'nullable|numeric|min:0|max:999.99',
+            'ativo'             => 'nullable|boolean',
+
+            //novos campos
+            'origem_mercadoria' => 'required|integer|between:0,8',
+            'aliquota_ipi'      => 'nullable|numeric|min:0|max:100',
+            'ipi_enquadramento' => 'nullable|regex:/^\d{1,3}$/',
+            'estoque_minimo'    => 'nullable|integer|min:0',
         ]);
 
-        $data['ativo'] = (bool) ($request->boolean('ativo'));
+        $data['ativo'] = (bool) $request->boolean('ativo');
 
         Produto::create($data);
 
@@ -86,23 +92,29 @@ class ProdutoController extends Controller
     public function update(Request $request, Produto $produto)
     {
         $data = $request->validate([
-            'descricao'        => 'required|string|max:255',
-            'codigo_barras'    => 'nullable|regex:/^\d{8,14}$/|unique:produtos,codigo_barras,' . $produto->id,
-            'categoria_produto'=> 'required|exists:categorias,id',
-            'margem_lucro'     => 'nullable|numeric|min:0|max:999.99',
-            'cest'             => 'nullable|regex:/^\d{7}$/',
-            'ncm'              => 'required|exists:ncms,id',
-            'unidade_medida'   => 'required|string|max:10',
-            'preco_custo'      => 'required|numeric|min:0|max:9999999999.99',
-            'preco_venda'      => 'required|numeric|min:0|max:9999999999.99',
-            'estoque'          => 'required|integer|min:0',
-            'icms'             => 'nullable|numeric|min:0|max:999.99',
-            'pis'              => 'nullable|numeric|min:0|max:999.99',
-            'cofins'           => 'nullable|numeric|min:0|max:999.99',
-            'ativo'            => 'nullable|boolean',
+            'descricao'         => 'required|string|max:255',
+            'codigo_barras'     => 'nullable|regex:/^\d{8,14}$/|unique:produtos,codigo_barras,' . $produto->id,
+            'categoria_produto' => 'required|exists:categorias,id',
+            'margem_lucro'      => 'nullable|numeric|min:0|max:999.99',
+            'cest'              => 'nullable|regex:/^\d{7}$/',
+            'ncm'               => 'required|exists:ncms,id',
+            'unidade_medida'    => 'required|string|max:10',
+            'preco_custo'       => 'required|numeric|min:0|max:9999999999.99',
+            'preco_venda'       => 'required|numeric|min:0|max:9999999999.99',
+            'estoque'           => 'required|integer|min:0',
+            'icms'              => 'nullable|numeric|min:0|max:999.99',
+            'pis'               => 'nullable|numeric|min:0|max:999.99',
+            'cofins'            => 'nullable|numeric|min:0|max:999.99',
+            'ativo'             => 'nullable|boolean',
+
+            //novos campos
+            'origem_mercadoria' => 'required|integer|between:0,8',
+            'aliquota_ipi'      => 'nullable|numeric|min:0|max:100',
+            'ipi_enquadramento' => 'nullable|regex:/^\d{1,3}$/',
+            'estoque_minimo'    => 'nullable|integer|min:0',
         ]);
 
-        $data['ativo'] = (bool) ($request->boolean('ativo'));
+        $data['ativo'] = (bool) $request->boolean('ativo');
 
         $produto->update($data);
 

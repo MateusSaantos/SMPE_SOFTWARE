@@ -93,6 +93,12 @@
           <span class="text-monospace">{{ (int) $produto->estoque }}</span>
         </div>
 
+        {{-- Estoque mínimo --}}
+        <div class="col-md-3">
+          <strong>Estoque Mínimo:</strong><br>
+          <span class="text-monospace">{{ (int) $produto->estoque_minimo }}</span>
+        </div>
+
         <div class="col-md-3">
           <strong>ICMS:</strong><br>
           {{ number_format($produto->icms, 2, ',', '.') }}%
@@ -105,6 +111,35 @@
           <strong>COFINS:</strong><br>
           {{ number_format($produto->cofins, 2, ',', '.') }}%
         </div>
+
+        {{-- Origem Mercadoria --}}
+        <div class="col-md-3">
+          <strong>Origem da Mercadoria:</strong><br>
+          {{ $produto->origem_mercadoria }} — 
+          @switch($produto->origem_mercadoria)
+            @case(0) Nacional @break
+            @case(1) Estrangeira (Importação direta) @break
+            @case(2) Estrangeira (Mercado interno) @break
+            @case(3) Nacional, conteúdo importado 40–70% @break
+            @case(4) Nacional (processos básicos) @break
+            @case(5) Nacional, importado ≤ 40% @break
+            @case(6) Estrangeira (Importação sem similar) @break
+            @case(7) Estrangeira (Interno, sem similar) @break
+            @case(8) Nacional, importado > 70% @break
+            @default —
+          @endswitch
+        </div>
+
+        {{-- IPI --}}
+        <div class="col-md-3">
+          <strong>Alíquota IPI:</strong><br>
+          {{ number_format($produto->aliquota_ipi, 2, ',', '.') }}%
+        </div>
+        <div class="col-md-3">
+          <strong>Enquadramento IPI:</strong><br>
+          <span class="text-monospace">{{ $produto->ipi_enquadramento ?: '—' }}</span>
+        </div>
+
         <div class="col-md-3">
           <strong>Status:</strong><br>
           @if($produto->ativo)

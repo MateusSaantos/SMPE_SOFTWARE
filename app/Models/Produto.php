@@ -23,32 +23,58 @@ class Produto extends Model
         'pis',
         'cofins',
         'ativo',
+
+        //campos adicionados
+        'origem_mercadoria',
+        'aliquota_ipi',
+        'ipi_enquadramento',
+        'estoque_minimo',
     ];
 
     protected $casts = [
-        'margem_lucro' => 'decimal:2',
-        'preco_custo'  => 'decimal:2',
-        'preco_venda'  => 'decimal:2',
-        'icms'         => 'decimal:2',
-        'pis'          => 'decimal:2',
-        'cofins'       => 'decimal:2',
-        'ativo'        => 'boolean',
+        'margem_lucro'      => 'decimal:2',
+        'preco_custo'       => 'decimal:2',
+        'preco_venda'       => 'decimal:2',
+        'icms'              => 'decimal:2',
+        'pis'               => 'decimal:2',
+        'cofins'            => 'decimal:2',
+        'ativo'             => 'boolean',
+
+        //casts dos novos campos
+        'origem_mercadoria' => 'integer',
+        'aliquota_ipi'      => 'decimal:2',
+        'estoque_minimo'    => 'integer',
     ];
 
-    // Normalizações leves
+    /*
+    |--------------------------------------------------------------------------
+    | Normalizações leves
+    |--------------------------------------------------------------------------
+    */
     public function setCodigoBarrasAttribute($value)
     {
-        $v = trim((string)$value);
+        $v = trim((string) $value);
         $this->attributes['codigo_barras'] = $v === '' ? null : preg_replace('/\D+/', '', $v);
     }
 
     public function setCestAttribute($value)
     {
-        $v = trim((string)$value);
+        $v = trim((string) $value);
         $this->attributes['cest'] = $v === '' ? null : preg_replace('/\D+/', '', $v);
     }
 
-    // Relacionamentos (nomes dos FKs seguem sua solicitação)
+    //mantém apenas dígitos no enquadramento do IPI; aceita null/''.
+    public function setIpiEnquadramentoAttribute($value)
+    {
+        $v = trim((string) $value);
+        $this->attributes['ipi_enquadramento'] = $v === '' ? null : preg_replace('/\D+/', '', $v);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relacionamentos
+    |--------------------------------------------------------------------------
+    */
     public function categoria()
     {
         return $this->belongsTo(\App\Models\Categoria::class, 'categoria_produto');
