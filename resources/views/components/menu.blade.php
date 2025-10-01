@@ -40,7 +40,6 @@
             <i class="fa-solid fa-barcode"></i> NCM
           </a>
         </li>
-        
       </ul>
     </li>
 
@@ -72,13 +71,24 @@
       </div>
       <ul class="submenu">
 
-      <li>
-        <a href="{{ route('notas.create') }}">
-          <i class="fas fa-keyboard"></i> Inserir nota manual
-        </a>
-      </li>
-      
-        <li><a href="#"><i class="fas fa-file-import"></i> Importar XML</a></li>
+        {{-- ✅ NOVO: Listar Notas --}}
+        <li>
+          <a href="{{ route('notas.index') }}">
+            <i class="fas fa-list"></i> Listar notas
+          </a>
+        </li>
+
+        <li>
+          <a href="{{ route('notas.create') }}">
+            <i class="fas fa-keyboard"></i> Inserir nota manual
+          </a>
+        </li>
+
+        <li>
+          <a href="{{ route('notas.import.form') }}">
+            <i class="fas fa-file-import"></i> Importar XML
+          </a>
+        </li>
         
       </ul>
     </li>

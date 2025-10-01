@@ -10,10 +10,11 @@ class NotaFiscalItem extends Model
 
     protected $fillable = [
         'nota_fiscal_id',
+        'produto_id',      // ⬅️ novo: referência ao produto
         'quantidade',
         'valor_unitario',
-        'ncm',
-        'cest',
+        'ncm',             // permanece na tabela (não usado na tela)
+        'cest',            // permanece na tabela (não usado na tela)
         'icms',
         'pis',
         'cofins',
@@ -27,8 +28,22 @@ class NotaFiscalItem extends Model
         'cofins'         => 'decimal:2',
     ];
 
-    public function nota(){ return $this->belongsTo(\App\Models\NotaFiscal::class, 'nota_fiscal_id'); }
-    public function ncmItem(){ return $this->belongsTo(\App\Models\Ncm::class, 'ncm'); }
+    // Relações
+    public function nota()
+    {
+        return $this->belongsTo(\App\Models\NotaFiscal::class, 'nota_fiscal_id');
+    }
+
+    public function produto()
+    {
+        return $this->belongsTo(\App\Models\Produto::class, 'produto_id');
+    }
+
+    // (Opcional) se ainda houver uso legado do NCM no item, mantemos:
+    public function ncmItem()
+    {
+        return $this->belongsTo(\App\Models\Ncm::class, 'ncm');
+    }
 
     // Acessor útil para exibição
     public function getTotalAttribute(): float

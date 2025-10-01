@@ -44,43 +44,79 @@
       </div>
       <div class="card-body">
         <div class="row g-3">
+          {{-- Produto --}}
+          <div class="col-md-6">
+            <label class="form-label">Produto</label>
+            @php $prodSel = old('produto_id'); @endphp
+            <select name="produto_id" id="produto_id" class="form-select" required>
+              <option value="" disabled {{ $prodSel ? '' : 'selected' }}>Selecione...</option>
+              @foreach($produtos as $p)
+                <option value="{{ $p->id }}" {{ (string)$prodSel === (string)$p->id ? 'selected' : '' }}>
+                  {{ $p->descricao }}@if($p->codigo_barras) — {{ $p->codigo_barras }} @endif
+                </option>
+              @endforeach
+            </select>
+            <div class="invalid-feedback">Selecione um produto.</div>
+          </div>
+
+          {{-- NCM --}}
+          <div class="col-md-4">
+            <label class="form-label">NCM</label>
+            @php $ncmSel = old('ncm'); @endphp
+            @isset($ncms)
+              <select name="ncm" class="form-select" required>
+                <option value="" disabled {{ $ncmSel ? '' : 'selected' }}>Selecione...</option>
+                @foreach($ncms as $n)
+                  <option value="{{ $n->id }}" {{ (string)$ncmSel === (string)$n->id ? 'selected' : '' }}>
+                    {{ $n->codigo }} — {{ $n->descricao }}
+                  </option>
+                @endforeach
+              </select>
+            @else
+              <select class="form-select" disabled>
+                <option>Carregando NCMs…</option>
+              </select>
+              <div class="form-text text-danger">Controller deve enviar $ncms.</div>
+            @endisset
+            <div class="invalid-feedback">Selecione o NCM.</div>
+          </div>
+
+          {{-- CEST --}}
+          <div class="col-md-2">
+            <label class="form-label">CEST</label>
+            <input type="text"
+                   name="cest"
+                   value="{{ old('cest') }}"
+                   class="form-control text-mono js-digits"
+                   placeholder="0000000"
+                   inputmode="numeric"
+                   pattern="\d{7}">
+            <div class="form-text">7 dígitos (opcional)</div>
+            <div class="invalid-feedback">Informe 7 dígitos ou deixe em branco.</div>
+          </div>
+
           <div class="col-md-2">
             <label class="form-label">Quantidade</label>
-            <input type="text" name="quantidade" class="form-control text-end text-mono js-decimal" inputmode="decimal" required>
+            <input type="text" name="quantidade" value="{{ old('quantidade') }}" class="form-control text-end text-mono js-decimal" inputmode="decimal" required>
             <div class="invalid-feedback">Informe a quantidade.</div>
           </div>
           <div class="col-md-2">
             <label class="form-label">Valor Unit. (R$)</label>
-            <input type="text" name="valor_unitario" class="form-control text-end text-mono js-decimal" inputmode="decimal" required>
+            <input type="text" name="valor_unitario" value="{{ old('valor_unitario') }}" class="form-control text-end text-mono js-decimal" inputmode="decimal" required>
             <div class="invalid-feedback">Informe o valor unitário.</div>
           </div>
-          <div class="col-md-4">
-            <label class="form-label">NCM</label>
-            <select name="ncm" class="form-select" required>
-              <option value="" selected disabled>Selecione...</option>
-              @foreach($ncms as $n)
-                <option value="{{ $n->id }}">{{ $n->codigo }} — {{ $n->descricao }}</option>
-              @endforeach
-            </select>
-            <div class="invalid-feedback">Selecione o NCM.</div>
+
+          <div class="col-md-2">
+            <label class="form-label">ICMS (%)</label>
+            <input type="text" name="icms" value="{{ old('icms','0') }}" class="form-control text-mono js-decimal" inputmode="decimal">
           </div>
           <div class="col-md-2">
-            <label class="form-label">CEST</label>
-            <input type="text" name="cest" class="form-control text-mono js-digits" placeholder="0000000" inputmode="numeric" pattern="\d{7}">
-            <div class="form-text">7 dígitos (opcional)</div>
-            <div class="invalid-feedback">Informe 7 dígitos ou deixe em branco.</div>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">ICMS (%)</label>
-            <input type="text" name="icms" class="form-control text-mono js-decimal" inputmode="decimal" value="0">
-          </div>
-          <div class="col-md-4">
             <label class="form-label">PIS (%)</label>
-            <input type="text" name="pis" class="form-control text-mono js-decimal" inputmode="decimal" value="0">
+            <input type="text" name="pis" value="{{ old('pis','0') }}" class="form-control text-mono js-decimal" inputmode="decimal">
           </div>
-          <div class="col-md-4">
+          <div class="col-md-2">
             <label class="form-label">COFINS (%)</label>
-            <input type="text" name="cofins" class="form-control text-mono js-decimal" inputmode="decimal" value="0">
+            <input type="text" name="cofins" value="{{ old('cofins','0') }}" class="form-control text-mono js-decimal" inputmode="decimal">
           </div>
         </div>
       </div>
@@ -95,22 +131,24 @@
     <div class="table-responsive">
       <table class="table table-hiper align-middle">
         <colgroup>
-          <col style="width:160px"><!-- Qtd -->
-          <col style="width:160px"><!-- Unit -->
-          <col style="width:220px"><!-- NCM -->
-          <col style="width:140px"><!-- CEST -->
+          <col style="width:auto"><!-- Produto -->
+          <col style="width:180px"><!-- NCM -->
+          <col style="width:120px"><!-- CEST -->
+          <col style="width:120px"><!-- Qtd -->
+          <col style="width:140px"><!-- Unit -->
           <col style="width:120px"><!-- ICMS -->
           <col style="width:120px"><!-- PIS -->
           <col style="width:120px"><!-- COFINS -->
-          <col style="width:160px"><!-- Total linha -->
+          <col style="width:160px"><!-- Total -->
           <col style="width:160px"><!-- Ações -->
         </colgroup>
         <thead>
           <tr>
-            <th class="text-end">Qtd</th>
-            <th class="text-end">Valor Unit.</th>
+            <th>Produto</th>
             <th>NCM</th>
             <th>CEST</th>
+            <th class="text-end">Qtd</th>
+            <th class="text-end">Valor Unit.</th>
             <th class="text-end">ICMS %</th>
             <th class="text-end">PIS %</th>
             <th class="text-end">COFINS %</th>
@@ -121,10 +159,21 @@
         <tbody>
         @forelse($nota->itens as $item)
           <tr>
+            <td class="text-mono">
+              {{ $item->produto?->descricao ?? '—' }}
+              @if(!empty($item->produto?->codigo_barras))
+                <small class="text-muted"> — {{ $item->produto->codigo_barras }}</small>
+              @endif
+            </td>
+            <td class="text-mono">
+              {{ $item->ncmItem?->codigo ?? '—' }}
+              @if($item->ncmItem?->descricao)
+                — <small class="text-muted">{{ $item->ncmItem->descricao }}</small>
+              @endif
+            </td>
+            <td class="text-mono">{{ $item->cest ?: '—' }}</td>
             <td class="text-end text-mono">{{ number_format($item->quantidade, 3, ',', '.') }}</td>
             <td class="text-end text-mono">R$ {{ number_format($item->valor_unitario, 2, ',', '.') }}</td>
-            <td class="text-mono">{{ $item->ncmItem?->codigo }} — {{ $item->ncmItem?->descricao }}</td>
-            <td class="text-mono">{{ $item->cest ?: '—' }}</td>
             <td class="text-end text-mono">{{ number_format($item->icms, 2, ',', '.') }}</td>
             <td class="text-end text-mono">{{ number_format($item->pis, 2, ',', '.') }}</td>
             <td class="text-end text-mono">{{ number_format($item->cofins, 2, ',', '.') }}</td>
@@ -151,6 +200,40 @@
                 <form method="POST" action="{{ route('notas.itens.update', [$nota->id, $item->id]) }}" class="needs-validation" novalidate>
                   @csrf @method('PUT')
                   <div class="row g-2">
+                    <div class="col-md-6">
+                      <label class="form-label small m-0">Produto</label>
+                      <select name="produto_id" id="produto_id_{{ $item->id }}" class="form-select form-select-sm" required>
+                        @foreach($produtos as $p)
+                          <option value="{{ $p->id }}" {{ (string)$item->produto_id === (string)$p->id ? 'selected' : '' }}>
+                            {{ $p->descricao }}@if($p->codigo_barras) — {{ $p->codigo_barras }} @endif
+                          </option>
+                        @endforeach
+                      </select>
+                    </div>
+
+                    {{-- NCM (edição) --}}
+                    <div class="col-md-4">
+                      <label class="form-label small m-0">NCM</label>
+                      @php $sel = (string) old('ncm', $item->ncm); @endphp
+                      @isset($ncms)
+                        <select name="ncm" class="form-select form-select-sm" required>
+                          @foreach($ncms as $n)
+                            <option value="{{ $n->id }}" {{ $sel === (string)$n->id ? 'selected' : '' }}>
+                              {{ $n->codigo }} — {{ $n->descricao }}
+                            </option>
+                          @endforeach
+                        </select>
+                      @else
+                        <select class="form-select form-select-sm" disabled><option>Carregando NCMs…</option></select>
+                      @endisset
+                    </div>
+
+                    {{-- CEST (edição) --}}
+                    <div class="col-md-2">
+                      <label class="form-label small m-0">CEST</label>
+                      <input type="text" name="cest" value="{{ old('cest', $item->cest) }}" class="form-control form-control-sm text-mono js-digits" placeholder="0000000" inputmode="numeric" pattern="\d{7}">
+                    </div>
+
                     <div class="col-md-2">
                       <label class="form-label small m-0">Qtd</label>
                       <input type="text" name="quantidade" value="{{ number_format($item->quantidade, 3, ',', '.') }}" class="form-control form-control-sm text-end text-mono js-decimal" required>
@@ -158,20 +241,6 @@
                     <div class="col-md-2">
                       <label class="form-label small m-0">Valor Unit.</label>
                       <input type="text" name="valor_unitario" value="{{ number_format($item->valor_unitario, 2, ',', '.') }}" class="form-control form-control-sm text-end text-mono js-decimal" required>
-                    </div>
-                    <div class="col-md-4">
-                      <label class="form-label small m-0">NCM</label>
-                      <select name="ncm" class="form-select form-select-sm" required>
-                        @foreach($ncms as $n)
-                          <option value="{{ $n->id }}" {{ (string)$item->ncm === (string)$n->id ? 'selected' : '' }}>
-                            {{ $n->codigo }} — {{ $n->descricao }}
-                          </option>
-                        @endforeach
-                      </select>
-                    </div>
-                    <div class="col-md-2">
-                      <label class="form-label small m-0">CEST</label>
-                      <input type="text" name="cest" value="{{ $item->cest }}" class="form-control form-control-sm text-mono js-digits" pattern="\d{7}">
                     </div>
                     <div class="col-md-2">
                       <label class="form-label small m-0">ICMS %</label>
@@ -194,7 +263,7 @@
             </td>
           </tr>
         @empty
-          <tr><td colspan="9" class="text-center text-muted">Nenhum item adicionado ainda.</td></tr>
+          <tr><td colspan="10" class="text-center text-muted">Nenhum item adicionado ainda.</td></tr>
         @endforelse
         </tbody>
       </table>

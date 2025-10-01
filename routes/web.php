@@ -38,7 +38,7 @@ Route::post('/logins', [LoginController::class, 'store'])->name('logins.store');
 // Logout (pode deixar GET por enquanto; em produção prefira POST)
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// CRUD de empresas — público (como você já queria)
+// CRUD de empresas — público
 Route::resource('empresas', EmpresaController::class);
 
 // Rotas protegidas por sessão "usuario"
@@ -60,22 +60,25 @@ Route::group([
         return view('empresas.create_user', compact('cnpj'));
     })->name('empresas.create_user');
 
+    // Cadastros
     Route::resource('fornecedores', FornecedorController::class);
-
     Route::resource('categorias', CategoriaController::class);
-
     Route::resource('ncms', NcmController::class);
+    Route::resource('produtos', ProdutoController::class);
 
-    Route::resource('produtos', ProdutoController::class);  
-    
+    // Importação de XML de NF-e
+    Route::get ('notas/importar-xml',        [NotaFiscalController::class, 'importForm'])->name('notas.import.form');
+    Route::post('notas/importar-xml',        [NotaFiscalController::class, 'importPreview'])->name('notas.import.preview'); // <= muda para preview
+    Route::post('notas/importar-xml/commit', [NotaFiscalController::class, 'importCommit'])->name('notas.import.commit');
+
+    // Notas fiscais (resource)
     Route::resource('notas', NotaFiscalController::class);
 
+    // Itens da nota
     Route::get('notas/{nota}/itens', [NotaFiscalItemController::class, 'index'])->name('notas.itens');
     Route::post('notas/{nota}/itens', [NotaFiscalItemController::class, 'store'])->name('notas.itens.store');
     Route::put('notas/{nota}/itens/{item}', [NotaFiscalItemController::class, 'update'])->name('notas.itens.update');
     Route::delete('notas/{nota}/itens/{item}', [NotaFiscalItemController::class, 'destroy'])->name('notas.itens.destroy');
 
     // (demais rotas internas que exigem usuário logado...)
-
-
 });

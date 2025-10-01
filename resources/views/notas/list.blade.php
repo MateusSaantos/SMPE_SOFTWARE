@@ -1,4 +1,4 @@
-{{-- resources/views/produtos/index.blade.php --}}
+{{-- resources/views/notas/list.blade.php --}}
 @extends('layout')
 
 @section('conteudo')
@@ -14,10 +14,10 @@
     {{-- Cabeçalho --}}
     <div class="page-head">
       <div class="page-head__left">
-        <i class="fa-solid fa-box page-head__icon"></i>
+        <i class="fa-solid fa-file-invoice-dollar page-head__icon"></i>
         <div>
-          <h1 class="page-head__title">Produtos</h1>
-          <p class="page-head__subtitle">Liste, pesquise e gerencie seus produtos.</p>
+          <h1 class="page-head__title">Notas Fiscais</h1>
+          <p class="page-head__subtitle">Liste, pesquise e gerencie suas notas fiscais.</p>
         </div>
       </div>
 
@@ -25,20 +25,20 @@
               class="btn btn-outline-primary btn-help"
               data-bs-toggle="popover"
               data-bs-title="Como funciona esta lista?"
-              data-bs-content="Busque por descrição ou código de barras. Clique no nome para visualizar. Use as ações à direita para ver, editar ou excluir."
-              aria-label="Ajuda sobre a lista de produtos">
+              data-bs-content="Busque por número, série, fornecedor ou CNPJ. Clique no número para visualizar. Use as ações à direita para ver, editar, lançar itens ou excluir."
+              aria-label="Ajuda sobre a lista de notas">
         <i class="fa-regular fa-circle-question me-2"></i> Ajuda
       </button>
     </div>
 
-    {{-- Balão fixo --}}
-    <div class="hint-bubble" id="hint-lista-produtos" role="status" aria-live="polite" style="display:block">
+    {{-- Balão fixo (dica) --}}
+    <div class="hint-bubble" id="hint-lista-notas" role="status" aria-live="polite" style="display:block">
       <div class="d-flex align-items-start gap-2">
         <i class="fa-regular fa-circle-question hint-bubble__icon mt-1"></i>
         <div class="flex-grow-1">
           <strong>Dica rápida</strong><br>
-          Pesquise pela <em>descrição</em> ou <em>código de barras</em>. Clique na descrição para visualizar.
-          Use os botões à direita para ver, editar ou excluir.
+          Pesquise por <em>número</em>, <em>série</em>, <em>fornecedor</em> ou <em>CNPJ</em>.
+          Clique no número/série para visualizar a capa. Use os botões à direita para ver, editar, lançar itens ou excluir.
         </div>
       </div>
       <span class="hint-bubble__arrow"></span>
@@ -52,10 +52,10 @@
       <div class="alert alert-danger mt-3">{{ session('error') }}</div>
     @endif
 
-    {{-- Botão cadastrar (sempre visível) --}}
+    {{-- Botão Nova Nota --}}
     <div class="mb-3">
-      <a href="{{ route('produtos.create') }}" class="btn btn-primary">
-        <i class="fa-solid fa-plus me-2"></i> Cadastrar Produto
+      <a href="{{ route('notas.create') }}" class="btn btn-primary">
+        <i class="fa-solid fa-plus me-2"></i> Nova Nota Manual
       </a>
     </div>
 
@@ -64,25 +64,25 @@
       <div class="input-group input-search-modern">
         <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
         <input type="text" name="q" value="{{ $q ?? '' }}" class="form-control"
-               placeholder="Buscar por descrição ou código de barras">
+               placeholder="Buscar por número, série, fornecedor ou CNPJ">
         <button class="btn btn-primary" type="submit">Buscar</button>
       </div>
     </form>
 
     {{-- Lista / Vazio --}}
-    @if($produtos->count() === 0)
+    @if($notas->count() === 0)
       <div class="data-card data-card--empty">
         <div class="empty-state">
           <i class="fa-regular fa-folder-open empty-state__icon"></i>
           <div class="empty-state__text">
-            Nenhum produto encontrado.
-            <a href="{{ route('produtos.create') }}">Cadastrar agora</a>.
+            Nenhuma nota encontrada.
+            <a href="{{ route('notas.create') }}">Lançar agora</a>.
           </div>
         </div>
       </div>
     @else
       @php
-        $perPage = (int) request('per_page', $produtos->perPage());
+        $perPage = (int) request('per_page', $notas->perPage());
         $sizes = [10,25,50,100];
       @endphp
 
@@ -101,66 +101,68 @@
         <div class="table-responsive">
           <table class="table table-hiper align-middle">
             <colgroup>
-              <col style="width:auto">   {{-- Descrição (ocupa o restante) --}}
-              {{-- <col style="width:160px">  Código de barras --}}
-              <col style="width:170px">  {{-- Categoria --}}
-              {{-- <col style="width:120px">  NCM --}}
-              <col style="width:140px">  {{-- Preço venda --}}
-              <col style="width:100px">  {{-- Estoque --}}
-              <col style="width:90px">   {{-- Ativo --}}
-              <col style="width:160px">  {{-- Ações --}}
+              <col style="width:160px">   {{-- Número/Série --}}
+              <col style="width:120px">   {{-- Emissão --}}
+              <col style="width:auto">    {{-- Fornecedor --}}
+              <col style="width:110px">   {{-- Itens --}}
+              <col style="width:160px">   {{-- Total --}}
+              <col style="width:160px">   {{-- Ações --}}
             </colgroup>
 
             <thead>
-              <th>Descrição</th>
-              <!-- <th>Cod. Barras</th> -->
-              <th>Categoria</th>
-              <!-- <th>NCM</th> -->
-              <th class="text-end">Preço Venda</th>
-              <th class="text-end">Estoque</th>
-              <th>Ativo</th>
+              <th>Número / Série</th>
+              <th>Emissão</th>
+              <th>Fornecedor</th>
+              <th class="text-end">Itens</th>
+              <th class="text-end">Total</th>
               <th class="text-end">Ações</th>
             </thead>
 
             <tbody>
-            @foreach($produtos as $p)
+            @foreach($notas as $n)
               <tr>
                 <td class="cell-name">
-                  <a href="{{ route('produtos.show', $p->id) }}" class="name-link" title="Ver produto">
-                    {{ $p->descricao }}
+                  <a href="{{ route('notas.show', $n->id) }}" class="name-link" title="Ver capa da nota">
+                    {{ $n->numero }}{{ $n->serie ? ' / '.$n->serie : '' }}
                   </a>
                 </td>
 
-                <!-- <td class="text-mono">{{ $p->codigo_barras ?? '—' }}</td> -->
-                <td>{{ $p->categoria->descricao ?? '—' }}</td>
-                <!-- <td class="text-mono">{{ $p->ncmItem?->codigo ?? '—' }}</td> -->
-                <td class="text-end text-mono">{{ number_format($p->preco_venda, 2, ',', '.') }}</td>
-                <td class="text-end text-mono">{{ $p->estoque }}</td>
+                <td class="text-mono">
+                  {{ $n->data_emissao ? \Illuminate\Support\Carbon::parse($n->data_emissao)->format('d/m/Y') : '—' }}
+                </td>
+
                 <td>
-                  @if($p->ativo)
-                    <span class="badge text-bg-success">Ativo</span>
-                  @else
-                    <span class="badge text-bg-secondary">Inativo</span>
-                  @endif
+                  {{ $n->fornecedor->razao_social ?? '—' }}
+                </td>
+
+                <td class="text-end text-mono">
+                  {{ method_exists($n, 'relationLoaded') && $n->relationLoaded('itens') ? $n->itens->count() : ($n->itens_count ?? '—') }}
+                </td>
+
+                <td class="text-end text-mono">
+                  R$ {{ number_format($n->valor_total ?? 0, 2, ',', '.') }}
                 </td>
 
                 <td class="text-end">
                   <div class="btn-group btn-group-actions">
-                    <a class="btn btn-icon" href="{{ route('produtos.show', $p->id) }}" title="Ver">
+                    <a class="btn btn-icon" href="{{ route('notas.show', $n->id) }}" title="Ver">
                       <i class="fa-regular fa-eye"></i>
                     </a>
-                    <a class="btn btn-icon" href="{{ route('produtos.edit', $p->id) }}" title="Editar">
+                    <a class="btn btn-icon" href="{{ route('notas.edit', $n->id) }}" title="Editar capa">
                       <i class="fa-regular fa-pen-to-square"></i>
+                    </a>
+                    <a class="btn btn-icon" href="{{ route('notas.itens', $n->id) }}" title="Lançar itens">
+                      <i class="fa-solid fa-list-check"></i>
                     </a>
 
                     {{-- Excluir --}}
-                    <form id="del-prod-{{ $p->id }}" action="{{ route('produtos.destroy', $p->id) }}" method="POST" class="d-inline">
+                    <form id="del-nota-{{ $n->id }}" action="{{ route('notas.destroy', $n->id) }}" method="POST" class="d-inline">
                       @csrf @method('DELETE')
                       <button type="button"
                               class="btn btn-icon text-danger js-open-delete"
-                              data-form="del-prod-{{ $p->id }}"
-                              data-title="Remover produto?"
-                              data-message="Remover <strong>{{ $p->descricao }}</strong>? Essa ação não pode ser desfeita."
+                              data-form="del-nota-{{ $n->id }}"
+                              data-title="Remover nota?"
+                              data-message="Remover a nota <strong>{{ $n->numero }}{{ $n->serie ? ' / '.$n->serie : '' }}</strong>? Essa ação não pode ser desfeita."
                               title="Excluir">
                         <i class="fa-regular fa-trash-can"></i>
                       </button>
@@ -187,13 +189,13 @@
 
       {{-- Paginação --}}
       <div class="d-flex justify-content-end mt-2">
-        {{ $produtos->appends(request()->query())->links() }}
+        {{ $notas->appends(request()->query())->links() }}
       </div>
     @endif
   </div>
 </div>
 
-{{-- Modal de confirmação (bonito) --}}
+{{-- Modal de confirmação --}}
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content modal-confirm">
@@ -205,7 +207,7 @@
       </div>
 
       <div class="modal-body pt-0">
-        <h5 class="modal-title fw-bold mb-1" id="confirmDeleteTitle">Remover produto?</h5>
+        <h5 class="modal-title fw-bold mb-1" id="confirmDeleteTitle">Remover nota?</h5>
         <p class="text-muted mb-0" id="confirmDeleteMessage">Essa ação não pode ser desfeita.</p>
       </div>
 
