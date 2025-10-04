@@ -70,8 +70,7 @@
         <span class="submenu-icon"><i class="fas fa-chevron-down"></i></span>
       </div>
       <ul class="submenu">
-
-        {{-- ✅ NOVO: Listar Notas --}}
+        {{-- Listar Notas --}}
         <li>
           <a href="{{ route('notas.index') }}">
             <i class="fas fa-list"></i> Listar notas
@@ -89,7 +88,28 @@
             <i class="fas fa-file-import"></i> Importar XML
           </a>
         </li>
-        
+      </ul>
+    </li>
+
+    <!-- Precificação -->
+    <li class="has-submenu">
+      <div class="menu-item-top">
+        <div class="menu-item-label">
+          <i class="fas fa-calculator"></i> Precificação
+        </div>
+        <span class="submenu-icon"><i class="fas fa-chevron-down"></i></span>
+      </div>
+      <ul class="submenu">
+        <li>
+          <a href="{{ route('simulacoes-precos.create') }}">
+            <i class="fas fa-sliders-h"></i> Simulador de preços
+          </a>
+        </li>
+        <li>
+          <a href="{{ route('simulacoes-precos.index') }}">
+            <i class="fas fa-history"></i> Histórico de simulações
+          </a>
+        </li>
       </ul>
     </li>
   </ul>

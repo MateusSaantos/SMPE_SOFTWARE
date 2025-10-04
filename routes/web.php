@@ -9,6 +9,7 @@ use App\Http\Controllers\NcmController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\NotaFiscalController;
 use App\Http\Controllers\NotaFiscalItemController;
+use App\Http\Controllers\SimulacaoPrecoController;
 
 // Página inicial redireciona para login ou dashboard
 Route::get('/', function () {
@@ -79,6 +80,12 @@ Route::group([
     Route::post('notas/{nota}/itens', [NotaFiscalItemController::class, 'store'])->name('notas.itens.store');
     Route::put('notas/{nota}/itens/{item}', [NotaFiscalItemController::class, 'update'])->name('notas.itens.update');
     Route::delete('notas/{nota}/itens/{item}', [NotaFiscalItemController::class, 'destroy'])->name('notas.itens.destroy');
+
+    // Simulações de preços
+    Route::get   ('/simulacoes-precos',        [SimulacaoPrecoController::class, 'index'])->name('simulacoes-precos.index');
+    Route::get   ('/simulacoes-precos/criar',  [SimulacaoPrecoController::class, 'create'])->name('simulacoes-precos.create');
+    Route::post  ('/simulacoes-precos',        [SimulacaoPrecoController::class, 'store'])->name('simulacoes-precos.store');
+    Route::delete('/simulacoes-precos/{simulacao}', [SimulacaoPrecoController::class, 'destroy'])->name('simulacoes-precos.destroy');
 
     // (demais rotas internas que exigem usuário logado...)
 });
