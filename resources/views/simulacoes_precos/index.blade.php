@@ -11,20 +11,17 @@
 <div class="container py-3 py-md-4">
   <div class="content-limiter">
 
-    {{-- Cabeçalho --}}
-    <div class="page-head">
-      <div class="page-head__left">
+    {{-- Cabeçalho: título à esquerda e Ajuda à direita --}}
+    <div class="page-head d-flex justify-content-between align-items-start">
+      <div class="page-head__left d-flex">
         <i class="fa-solid fa-sliders page-head__icon"></i>
         <div>
-          <h1 class="page-head__title">Histórico de Precificações</h1>
-          <p class="page-head__subtitle">Liste, pesquise e gerencie as simulações de preço realizadas.</p>
+          <h1 class="page-head__title mb-1">Histórico de Precificações</h1>
+          <p class="page-head__subtitle mb-0">Liste, pesquise e gerencie as simulações de preço realizadas.</p>
         </div>
       </div>
 
-      <div class="d-flex gap-2">
-        <a href="{{ route('simulacoes-precos.create') }}" class="btn btn-primary">
-          <i class="fa-solid fa-plus me-2"></i> Nova Simulação
-        </a>
+      <div class="ms-3">
         <button type="button"
                 class="btn btn-outline-primary btn-help"
                 data-bs-toggle="popover"
@@ -47,6 +44,13 @@
       <span class="hint-bubble__arrow"></span>
     </div>
 
+    {{-- Nova Simulação logo abaixo da dica --}}
+    <div class="mb-3 mt-2">
+      <a href="{{ route('simulacoes-precos.create') }}" class="btn btn-primary">
+        <i class="fa-solid fa-plus me-2"></i> Nova Simulação
+      </a>
+    </div>
+
     {{-- ALERTAS --}}
     @if(session('ok'))
       <div class="alert alert-success mt-3">{{ session('ok') }}</div>
@@ -55,10 +59,11 @@
       <div class="alert alert-danger mt-3">{{ $errors->first() }}</div>
     @endif
 
-    {{-- Filtros --}}
+    {{-- Filtros (Busca ocupa a linha toda; demais filtros descem) --}}
     <form method="GET" class="mb-3">
       <div class="row g-2">
-        <div class="col-12 col-md-5">
+        {{-- Linha 1: busca full width --}}
+        <div class="col-12">
           <div class="input-group input-search-modern">
             <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
             <input type="text" name="q" value="{{ $q ?? '' }}" class="form-control" placeholder="Buscar por produto">
@@ -66,7 +71,8 @@
           </div>
         </div>
 
-        <div class="col-12 col-md-2">
+        {{-- Linha 2: filtros adicionais --}}
+        <div class="col-12 col-md-3">
           <select name="tipo_simulacao" class="form-select" aria-label="Filtrar por tipo">
             <option value="">Tipo (todos)</option>
             @foreach(['promocao'=>'Promoção','oferta'=>'Oferta','baixar_preco'=>'Baixar preço','aumentar_lucro'=>'Aumentar lucro'] as $k=>$v)
@@ -75,7 +81,7 @@
           </select>
         </div>
 
-        <div class="col-12 col-md-2">
+        <div class="col-12 col-md-3">
           <select name="margem_calculo" class="form-select" aria-label="Filtrar por modo">
             <option value="" {{ (($modo ?? '')==='') ? 'selected' : '' }}>Modo (ambos)</option>
             <option value="markup" {{ (($modo ?? '')==='markup') ? 'selected' : '' }}>Mark-up</option>
@@ -83,14 +89,14 @@
           </select>
         </div>
 
-        <div class="col-6 col-md-1">
+        <div class="col-6 col-md-2">
           <input type="date" name="de" class="form-control" value="{{ $de ?? '' }}" aria-label="Data inicial">
         </div>
-        <div class="col-6 col-md-1">
+        <div class="col-6 col-md-2">
           <input type="date" name="ate" class="form-control" value="{{ $ate ?? '' }}" aria-label="Data final">
         </div>
 
-        <div class="col-12 col-md-1 d-grid">
+        <div class="col-12 col-md-2 d-grid">
           <a href="{{ route('simulacoes-precos.index') }}" class="btn btn-outline-secondary">Limpar</a>
         </div>
       </div>

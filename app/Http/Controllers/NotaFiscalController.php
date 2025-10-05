@@ -18,36 +18,57 @@ class NotaFiscalController extends Controller
 {
     public function index(Request $request)
     {
-        $q = trim($request->get('q', ''));
+        $q       = trim($request->get('q', ''));
+        $tipo    = $request->get('tipo');     // 'entrada' | 'saida' | null
+        $de      = $request->get('de');       // YYYY-MM-DD
+        $ate     = $request->get('ate');      // YYYY-MM-DD
         $perPage = (int) $request->get('per_page', 10);
         if (!in_array($perPage, [10,25,50,100])) $perPage = 10;
 
         $notas = NotaFiscal::query()
             ->with(['fornecedor'])
-            ->withCount('itens')
+            // ->withCount('itens') // mantenha se precisar desse dado
             ->when($q !== '', function ($query) use ($q) {
                 $digits = preg_replace('/\D+/', '', $q);
-                $query->where(function($qq) use ($q, $digits) {
+
+                // AGRUPA toda a lógica de busca em um único bloco
+                $query->where(function ($qq) use ($q, $digits) {
                     $qq->where('numero', 'like', "%{$q}%")
-                       ->orWhere('serie', 'like', "%{$q}%");
+                       ->orWhere('serie',  'like', "%{$q}%");
 
                     if ($digits !== '') {
                         $qq->orWhere('chave_acesso', 'like', "%{$digits}%");
                     }
-                })
-                ->orWhereHas('fornecedor', function($f) use ($q) {
-                    $digits = preg_replace('/\D+/', '', $q);
-                    $f->where('razao_social','like',"%{$q}%");
-                    if ($digits !== '') {
-                        $f->orWhere('cnpj', 'like', "%{$digits}%");
-                    }
+
+                    $qq->orWhereHas('fornecedor', function ($f) use ($q, $digits) {
+                        $f->where('razao_social', 'like', "%{$q}%");
+                        if ($digits !== '') {
+                            $f->orWhere('cnpj', 'like', "%{$digits}%");
+                        }
+                    });
                 });
             })
-            ->orderByDesc('data_emissao')
+            ->when($tipo !== null && $tipo !== '', function ($query) use ($tipo) {
+                // ajuste o nome da coluna se no seu schema for outro
+                $query->where('tipo', $tipo);
+            })
+            ->when($de, function ($query) use ($de) {
+                $query->whereDate('data_emissao', '>=', $de);
+            })
+            ->when($ate, function ($query) use ($ate) {
+                $query->whereDate('data_emissao', '<=', $ate);
+            })
+            ->orderByDesc(DB::raw('COALESCE(data_emissao, created_at)'))
             ->orderByDesc('id')
             ->paginate($perPage);
 
-        return view('notas.list', compact('notas','q'));
+        return view('notas.list', [
+            'notas' => $notas,
+            'q'     => $q,
+            'tipo'  => $tipo,
+            'de'    => $de,
+            'ate'   => $ate,
+        ]);
     }
 
     public function create()

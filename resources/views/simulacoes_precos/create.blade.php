@@ -4,6 +4,25 @@
 @section('conteudo')
 @push('styles')
   <link href="{{ asset('css/pages/categorias_create.css') }}" rel="stylesheet">
+  <style>
+    /* Área de lista de produtos com rolagem */
+    .product-list-scroll{
+      max-height: 60vh;
+      overflow: auto;
+      border: 1px solid rgba(0,0,0,.05);
+      border-radius: .5rem;
+    }
+    /* Cabeçalho da tabela fixo durante a rolagem */
+    .product-list-scroll thead th{
+      position: sticky;
+      top: 0;
+      background: var(--bs-body-bg, #fff);
+      z-index: 2;
+    }
+    @media (max-width: 991.98px){
+      .product-list-scroll{ max-height: 40vh; }
+    }
+  </style>
 @endpush
 
 <div class="container py-3 py-md-4">
@@ -67,7 +86,7 @@
                   </div>
                 </div>
                 <button type="button" class="btn btn-sm btn-outline-danger" id="btn-clear-produto">
-                  <i class="fa-solid fa-xmark me-1"></i> Limpar seleção
+                  <i class="fa-solid fa-xmark"></i>
                 </button>
               </div>
               <hr>
@@ -107,8 +126,8 @@
               <div class="col-md-3">
                 <label class="form-label">Modo de Margem</label>
                 <select name="margem_calculo" class="form-select">
-                  <option value="markup" @selected(old('margem_calculo','markup')==='markup')>Mark-up sobre custo</option>
-                  <option value="margin" @selected(old('margem_calculo')==='margin')>Margem líquida no preço</option>
+                  <option value="markup" {{ (old('margem_calculo','markup')==='markup') ? 'selected' : '' }}>Mark-up sobre custo</option>
+                  <option value="margin" {{ (old('margem_calculo')==='margin') ? 'selected' : '' }}>Margem líquida no preço</option>
                 </select>
               </div>
 
@@ -122,10 +141,10 @@
                 <label class="form-label">Tipo de Simulação</label>
                 <select name="tipo_simulacao" class="form-select">
                   <option value="">—</option>
-                  <option value="promocao" @selected(old('tipo_simulacao')==='promocao')>Promoção</option>
-                  <option value="oferta" @selected(old('tipo_simulacao')==='oferta')>Oferta</option>
-                  <option value="baixar_preco" @selected(old('tipo_simulacao')==='baixar_preco')>Baixar preço</option>
-                  <option value="aumentar_lucro" @selected(old('tipo_simulacao')==='aumentar_lucro')>Aumentar lucro</option>
+                  <option value="promocao" {{ (old('tipo_simulacao')==='promocao') ? 'selected' : '' }}>Promoção</option>
+                  <option value="oferta" {{ (old('tipo_simulacao')==='oferta') ? 'selected' : '' }}>Oferta</option>
+                  <option value="baixar_preco" {{ (old('tipo_simulacao')==='baixar_preco') ? 'selected' : '' }}>Baixar preço</option>
+                  <option value="aumentar_lucro" {{ (old('tipo_simulacao')==='aumentar_lucro') ? 'selected' : '' }}>Aumentar lucro</option>
                 </select>
               </div>
 
@@ -166,7 +185,7 @@
     {{-- Lista de produtos direita --}}
     <div class="col-12 col-lg-4">
       <div class="card shadow-sm h-100">
-        <div class="card-body">
+        <div class="card-body d-flex flex-column">
           <h5 class="mb-3"><i class="fa-solid fa-box me-2"></i>Produtos</h5>
 
           {{-- Busca --}}
@@ -175,13 +194,15 @@
               <input type="search" name="q" class="form-control" placeholder="Buscar por nome" value="{{ request('q') }}">
             </div>
             <div class="col-3 d-grid">
-              <button class="btn btn-outline-primary"><i class="fa-solid fa-magnifying-glass"></i></button>
+              <button class="btn btn-outline-primary" title="Buscar" aria-label="Buscar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </button>
             </div>
           </form>
 
-          {{-- Tabela (sem código de barras) --}}
-          <div class="table-responsive">
-            <table class="table align-middle">
+          {{-- Lista com rolagem --}}
+          <div class="product-list-scroll">
+            <table class="table align-middle mb-0">
               <thead>
                 <tr>
                   <th>Produto</th>
@@ -197,11 +218,13 @@
                   </td>
                   <td class="text-end">
                     <div class="btn-group">
+                      {{-- Ícone somente: Visualizar --}}
                       <button type="button"
                               class="btn btn-sm btn-outline-info btn-visualizar-produto"
+                              title="Visualizar"
+                              aria-label="Visualizar"
                               data-bs-toggle="modal"
                               data-bs-target="#modalProduto"
-                              {{-- dados para o modal --}}
                               data-id="{{ $p->id }}"
                               data-nome="{{ $p->descricao }}"
                               data-categoria="{{ data_get($p, 'categoria.descricao', '—') }}"
@@ -214,17 +237,19 @@
                               data-margem="{{ $p->margem_lucro ?? '—' }}"
                               data-icms="{{ $p->icms ?? '—' }}"
                               data-pis="{{ $p->pis ?? '—' }}"
-                              data-cofins="{{ $p->cofins ?? '—' }}"
-                              >
-                        <i class="fa-regular fa-eye me-1"></i> Visualizar
+                              data-cofins="{{ $p->cofins ?? '—' }}">
+                        <i class="fa-regular fa-eye"></i>
                       </button>
 
+                      {{-- Ícone somente: Selecionar --}}
                       <button type="button"
                               class="btn btn-sm btn-outline-success btn-selecionar-produto"
+                              title="Selecionar"
+                              aria-label="Selecionar"
                               data-id="{{ $p->id }}"
                               data-nome="{{ $p->descricao }}"
                               data-categoria="{{ data_get($p, 'categoria.descricao', '—') }}">
-                        <i class="fa-solid fa-check me-1"></i> Selecionar
+                        <i class="fa-solid fa-check"></i>
                       </button>
                     </div>
                   </td>
@@ -238,12 +263,14 @@
             </table>
           </div>
 
-          <div class="d-flex justify-content-center">
+          {{-- Paginação (fora da área rolável) --}}
+          <div class="d-flex justify-content-center mt-3">
             {{ $produtos->withQueryString()->links() }}
           </div>
         </div>
       </div>
     </div>
+
   </div>
 </div>
 
@@ -353,11 +380,9 @@
 
     // Botão "Visualizar" -> preenche modal
     const modalEl = document.getElementById('modalProduto');
-    let modalBtnFonte = null; // guarda o botão que abriu o modal
 
     document.querySelectorAll('.btn-visualizar-produto').forEach(btn => {
       btn.addEventListener('click', function(){
-        modalBtnFonte = this;
         document.getElementById('m-nome').textContent       = this.dataset.nome || '—';
         document.getElementById('m-categoria').textContent  = this.dataset.categoria || '—';
         document.getElementById('m-ncm').textContent        = this.dataset.ncm || '—';
@@ -371,10 +396,11 @@
         document.getElementById('m-pis').textContent        = (this.dataset.pis ?? '—');
         document.getElementById('m-cofins').textContent     = (this.dataset.cofins ?? '—');
 
-        // Salva id no botão "Selecionar este produto" do modal
-        document.getElementById('modal-selecionar-produto').dataset.id        = this.dataset.id;
-        document.getElementById('modal-selecionar-produto').dataset.nome      = this.dataset.nome;
-        document.getElementById('modal-selecionar-produto').dataset.categoria = this.dataset.categoria;
+        // Passa os dados para o botão "Selecionar este produto" do modal
+        const btnSel = document.getElementById('modal-selecionar-produto');
+        btnSel.dataset.id        = this.dataset.id;
+        btnSel.dataset.nome      = this.dataset.nome;
+        btnSel.dataset.categoria = this.dataset.categoria;
       });
     });
 

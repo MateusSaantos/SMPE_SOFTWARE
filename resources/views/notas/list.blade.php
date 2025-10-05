@@ -11,37 +11,47 @@
 <div class="container py-3 py-md-4">
   <div class="content-limiter">
 
-    {{-- Cabeçalho --}}
-    <div class="page-head">
-      <div class="page-head__left">
+    {{-- Cabeçalho (título + Ajuda à direita) --}}
+    <div class="page-head d-flex justify-content-between align-items-start">
+      <div class="page-head__left d-flex">
         <i class="fa-solid fa-file-invoice-dollar page-head__icon"></i>
         <div>
-          <h1 class="page-head__title">Notas Fiscais</h1>
-          <p class="page-head__subtitle">Liste, pesquise e gerencie suas notas fiscais.</p>
+          <h1 class="page-head__title mb-1">Notas Fiscais</h1>
+          <p class="page-head__subtitle mb-0">Liste, pesquise e gerencie suas notas fiscais.</p>
         </div>
       </div>
-
-      <button type="button"
-              class="btn btn-outline-primary btn-help"
-              data-bs-toggle="popover"
-              data-bs-title="Como funciona esta lista?"
-              data-bs-content="Busque por número, série, fornecedor ou CNPJ. Clique no número para visualizar. Use as ações à direita para ver, editar, lançar itens ou excluir."
-              aria-label="Ajuda sobre a lista de notas">
-        <i class="fa-regular fa-circle-question me-2"></i> Ajuda
-      </button>
+      <div class="ms-3">
+        <button type="button"
+                class="btn btn-outline-primary btn-help"
+                data-bs-toggle="popover"
+                data-bs-title="Como funciona esta lista?"
+                data-bs-content="Busque por número, série, fornecedor ou CNPJ. Use os filtros de tipo e período. Clique no número para visualizar.">
+          <i class="fa-regular fa-circle-question me-2"></i> Ajuda
+        </button>
+      </div>
     </div>
 
-    {{-- Balão fixo (dica) --}}
+    {{-- Dica --}}
     <div class="hint-bubble" id="hint-lista-notas" role="status" aria-live="polite" style="display:block">
       <div class="d-flex align-items-start gap-2">
         <i class="fa-regular fa-circle-question hint-bubble__icon mt-1"></i>
         <div class="flex-grow-1">
           <strong>Dica rápida</strong><br>
           Pesquise por <em>número</em>, <em>série</em>, <em>fornecedor</em> ou <em>CNPJ</em>.
-          Clique no número/série para visualizar a capa. Use os botões à direita para ver, editar, lançar itens ou excluir.
+          Use os filtros abaixo para refinar por <em>tipo</em> e <em>período</em>.
         </div>
       </div>
       <span class="hint-bubble__arrow"></span>
+    </div>
+
+    {{-- Ações (Nova + Importar XML) --}}
+    <div class="d-flex flex-wrap gap-2 mb-3 mt-2">
+      <a href="{{ route('notas.create') }}" class="btn btn-primary">
+        <i class="fa-solid fa-plus me-2"></i> Nova Nota Manual
+      </a>
+      <a href="{{ route('notas.import.form') }}" class="btn btn-primary">
+        <i class="fa-solid fa-file-import me-2"></i> Importar XML
+      </a>
     </div>
 
     {{-- ALERTAS --}}
@@ -52,20 +62,42 @@
       <div class="alert alert-danger mt-3">{{ session('error') }}</div>
     @endif
 
-    {{-- Botão Nova Nota --}}
-    <div class="mb-3">
-      <a href="{{ route('notas.create') }}" class="btn btn-primary">
-        <i class="fa-solid fa-plus me-2"></i> Nova Nota Manual
-      </a>
-    </div>
+    {{-- Filtros (busca ocupa a linha toda; filtros na segunda linha) --}}
+    <form method="GET" class="mb-3" role="search">
+      <div class="row g-2">
+        {{-- Linha 1: Busca full width --}}
+        <div class="col-12">
+          <div class="input-group input-search-modern">
+            <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <input type="text"
+                   name="q"
+                   value="{{ request('q', $q ?? '') }}"
+                   class="form-control"
+                   placeholder="Buscar por número, série, fornecedor ou CNPJ">
+            <button class="btn btn-primary" type="submit">Buscar</button>
+          </div>
+        </div>
 
-    {{-- Busca --}}
-    <form method="GET" class="mb-3">
-      <div class="input-group input-search-modern">
-        <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
-        <input type="text" name="q" value="{{ $q ?? '' }}" class="form-control"
-               placeholder="Buscar por número, série, fornecedor ou CNPJ">
-        <button class="btn btn-primary" type="submit">Buscar</button>
+        {{-- Linha 2: Tipo + Período + Limpar --}}
+        <div class="col-12 col-md-3">
+          @php $tipoSel = request('tipo'); @endphp
+          <select name="tipo" class="form-select" aria-label="Filtrar por tipo">
+            <option value="" {{ $tipoSel==='' || $tipoSel===null ? 'selected' : '' }}>Tipo (todos)</option>
+            <option value="entrada" {{ $tipoSel==='entrada' ? 'selected' : '' }}>Entrada</option>
+            <option value="saida"   {{ $tipoSel==='saida'   ? 'selected' : '' }}>Saída</option>
+          </select>
+        </div>
+
+        <div class="col-6 col-md-2">
+          <input type="date" name="de"  class="form-control" value="{{ request('de') }}"  aria-label="Data inicial" placeholder="dd/mm/aaaa">
+        </div>
+        <div class="col-6 col-md-2">
+          <input type="date" name="ate" class="form-control" value="{{ request('ate') }}" aria-label="Data final"   placeholder="dd/mm/aaaa">
+        </div>
+
+        <div class="col-12 col-md-2 d-grid">
+          <a href="{{ route('notas.index') }}" class="btn btn-outline-secondary">Limpar</a>
+        </div>
       </div>
     </form>
 
@@ -76,7 +108,8 @@
           <i class="fa-regular fa-folder-open empty-state__icon"></i>
           <div class="empty-state__text">
             Nenhuma nota encontrada.
-            <a href="{{ route('notas.create') }}">Lançar agora</a>.
+            <a href="{{ route('notas.create') }}">Lançar agora</a> ou
+            <a href="{{ route('notas.import.form') }}">importar XML</a>.
           </div>
         </div>
       </div>
@@ -91,8 +124,8 @@
         <div class="list-toolbar">
           <span class="label">Visualizar:</span>
           @foreach($sizes as $n)
-            <a  class="size-link {{ $perPage === $n ? 'is-active' : '' }}"
-                href="{{ request()->fullUrlWithQuery(['per_page' => $n, 'page' => 1]) }}">
+            <a class="size-link {{ $perPage === $n ? 'is-active' : '' }}"
+               href="{{ request()->fullUrlWithQuery(['per_page' => $n, 'page' => 1]) }}">
               {{ $n }}
             </a>
           @endforeach
@@ -101,25 +134,30 @@
         <div class="table-responsive">
           <table class="table table-hiper align-middle">
             <colgroup>
-              <col style="width:160px">   {{-- Número/Série --}}
-              <col style="width:120px">   {{-- Emissão --}}
-              <col style="width:auto">    {{-- Fornecedor --}}
-              <col style="width:110px">   {{-- Itens --}}
-              <col style="width:160px">   {{-- Total --}}
-              <col style="width:160px">   {{-- Ações --}}
+              <col style="width:210px">   {{-- Número/Série --}}
+              <col>                      {{-- Fornecedor --}}
+              <col style="width:120px">  {{-- Tipo --}}
+              <col style="width:160px">  {{-- Total --}}
+              <col style="width:160px">  {{-- Ações --}}
             </colgroup>
 
             <thead>
-              <th>Número / Série</th>
-              <th>Emissão</th>
-              <th>Fornecedor</th>
-              <th class="text-end">Itens</th>
-              <th class="text-end">Total</th>
-              <th class="text-end">Ações</th>
+              <tr>
+                <th>Número / Série</th>
+                <th>Fornecedor</th>
+                <th>Tipo</th>
+                <th class="text-end">Total</th>
+                <th class="text-end">Ações</th>
+              </tr>
             </thead>
 
             <tbody>
             @foreach($notas as $n)
+              @php
+                // ajuste o campo conforme seu modelo (ex.: $n->tipo, $n->natureza, etc.)
+                $tipoNota = strtolower($n->tipo ?? 'entrada');
+                $isEntrada = $tipoNota === 'entrada';
+              @endphp
               <tr>
                 <td class="cell-name">
                   <a href="{{ route('notas.show', $n->id) }}" class="name-link" title="Ver capa da nota">
@@ -127,16 +165,12 @@
                   </a>
                 </td>
 
-                <td class="text-mono">
-                  {{ $n->data_emissao ? \Illuminate\Support\Carbon::parse($n->data_emissao)->format('d/m/Y') : '—' }}
-                </td>
+                <td>{{ data_get($n, 'fornecedor.razao_social', '—') }}</td>
 
                 <td>
-                  {{ $n->fornecedor->razao_social ?? '—' }}
-                </td>
-
-                <td class="text-end text-mono">
-                  {{ method_exists($n, 'relationLoaded') && $n->relationLoaded('itens') ? $n->itens->count() : ($n->itens_count ?? '—') }}
+                  <span class="badge {{ $isEntrada ? 'bg-success' : 'bg-warning text-dark' }}">
+                    {{ $isEntrada ? 'Entrada' : 'Saída' }}
+                  </span>
                 </td>
 
                 <td class="text-end text-mono">
@@ -179,8 +213,8 @@
         <div class="list-toolbar border-top">
           <span class="label">Visualizar:</span>
           @foreach($sizes as $n)
-            <a  class="size-link {{ $perPage === $n ? 'is-active' : '' }}"
-                href="{{ request()->fullUrlWithQuery(['per_page' => $n, 'page' => 1]) }}">
+            <a class="size-link {{ $perPage === $n ? 'is-active' : '' }}"
+               href="{{ request()->fullUrlWithQuery(['per_page' => $n, 'page' => 1]) }}">
               {{ $n }}
             </a>
           @endforeach
