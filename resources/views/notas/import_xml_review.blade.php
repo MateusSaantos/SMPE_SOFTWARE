@@ -1,9 +1,23 @@
 @php
   // Resgata o rascunho da sessão
   $draft        = session("import_nfe.$token");
-  $fornecedores = \App\Models\Fornecedor::orderBy('razao_social')->get(['cnpj','razao_social']);
+
+  // Listas auxiliares
   $categorias   = \App\Models\Categoria::orderBy('descricao')->get(['id','descricao']);
-  $prodSugestoes= $draft['suggestions']['produtos'] ?? [];
+
+  // Fornecedor do XML
+  $fornXml      = $draft['fornecedor'] ?? null;
+  $cnpjXml      = $fornXml['cnpj'] ?? null;
+
+  // Tenta localizar fornecedor por CNPJ
+  $fornecedorEncontrado = null;
+  if ($cnpjXml) {
+    // Ajuste aqui caso sua PK/coluna seja diferente
+    $fornecedorEncontrado = \App\Models\Fornecedor::where('cnpj', $cnpjXml)->first();
+  }
+
+  // Sugestões de produto do parser original (mantido se quiser usar)
+  $prodSugestoes = $draft['suggestions']['produtos'] ?? [];
 @endphp
 
 @if(!$draft)
@@ -37,86 +51,91 @@
       </div>
     </div>
 
-    {{-- Fornecedor --}}
+    {{-- Fornecedor (auto: vincula por CNPJ ou prepara criação) --}}
     <div class="card shadow-sm mb-3">
       <div class="card-header d-flex align-items-center gap-2">
         <i class="fa-solid fa-truck-field"></i>
         <strong>Fornecedor</strong>
       </div>
       <div class="card-body">
-        <div class="row g-3 align-items-end">
-          <div class="col-md-3">
-            <label class="form-label">Modo</label>
-            @php $sug = $draft['suggestions']['fornecedor_id'] ?? null; @endphp
-            <select name="fornecedor_mode" id="fornecedor_mode" class="form-select" required>
-              <option value="link" {{ $sug ? 'selected' : '' }}>Vincular existente</option>
-              <option value="new"  {{ $sug ? '' : 'selected' }}>Criar novo</option>
-            </select>
-          </div>
-
-          {{-- Vincular fornecedor existente --}}
-          <div class="col-md-9 {{ $sug ? '' : 'd-none' }}" data-fornecedor="link">
-            <label class="form-label">Fornecedor existente</label>
-            <select name="fornecedor_id" class="form-select">
-              <option value="">Selecione...</option>
-              @foreach($fornecedores as $f)
-                <option value="{{ $f->cnpj }}" {{ (string)$sug === (string)$f->cnpj ? 'selected' : '' }}>
-                  {{ $f->razao_social }} — {{ $f->cnpj }}
-                </option>
-              @endforeach
-            </select>
-          </div>
-
-          {{-- Criar novo fornecedor (somente leitura, a partir do XML) --}}
-          <div class="col-12 {{ $sug ? 'd-none' : '' }}" data-fornecedor="new">
-            <div class="row g-2">
-              <div class="col-md-4">
-                <label class="form-label">CNPJ</label>
-                <input type="text" class="form-control text-mono" value="{{ $draft['fornecedor']['cnpj'] }}" disabled>
-              </div>
-              <div class="col-md-8">
-                <label class="form-label">Razão Social</label>
-                <input type="text" class="form-control" value="{{ $draft['fornecedor']['razao'] }}" disabled>
-              </div>
-
-              @if($draft['fornecedor']['endereco'])
-                @php $e = $draft['fornecedor']['endereco']; @endphp
-                <div class="col-md-2">
-                  <label class="form-label">CEP</label>
-                  <input class="form-control" value="{{ $e['cep'] }}" disabled>
-                </div>
-                <div class="col-md-1">
-                  <label class="form-label">UF</label>
-                  <input class="form-control" value="{{ $e['uf'] }}" disabled>
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label">Cidade</label>
-                  <input class="form-control" value="{{ $e['cidade'] }}" disabled>
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label">Bairro</label>
-                  <input class="form-control" value="{{ $e['bairro'] }}" disabled>
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label">Logradouro</label>
-                  <input class="form-control" value="{{ $e['logradouro'] }}" disabled>
-                </div>
-                <div class="col-md-2">
-                  <label class="form-label">Número</label>
-                  <input class="form-control" value="{{ $e['numero'] }}" disabled>
-                </div>
-              @endif
-
-              <div class="form-text">
-                Os dados acima serão usados para criar o fornecedor, caso você não vincule um existente.
-              </div>
+        @if($fornecedorEncontrado)
+          {{-- Vinculado automaticamente --}}
+          <div class="alert alert-success d-flex align-items-center gap-2">
+            <i class="fa-solid fa-link"></i>
+            <div>
+              <strong>Fornecedor vinculado automaticamente pelo CNPJ.</strong><br>
+              {{ $fornecedorEncontrado->razao_social }} — <span class="text-mono">{{ $fornecedorEncontrado->cnpj }}</span>
             </div>
           </div>
-        </div>
+          {{-- Envia o ID/Chave do fornecedor para o backend --}}
+          <input type="hidden" name="fornecedor_id" value="{{ $fornecedorEncontrado->cnpj }}">
+          <input type="hidden" name="fornecedor_mode" value="link">
+        @else
+          {{-- Não encontrou: preparar criação automática (sem opção de alternar) --}}
+          <div class="alert alert-warning d-flex align-items-center gap-2">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <div>
+              <strong>Fornecedor não encontrado pelo CNPJ.</strong> Vamos criar automaticamente com os dados do XML.
+            </div>
+          </div>
+
+          <input type="hidden" name="fornecedor_mode" value="new">
+
+          <div class="row g-2">
+            <div class="col-md-4">
+              <label class="form-label">CNPJ</label>
+              <input type="text" class="form-control text-mono" value="{{ $fornXml['cnpj'] ?? '' }}" disabled>
+              <input type="hidden" name="fornecedor_new[cnpj]" value="{{ $fornXml['cnpj'] ?? '' }}">
+            </div>
+            <div class="col-md-8">
+              <label class="form-label">Razão Social</label>
+              <input type="text" class="form-control" value="{{ $fornXml['razao'] ?? '' }}" disabled>
+              <input type="hidden" name="fornecedor_new[razao_social]" value="{{ $fornXml['razao'] ?? '' }}">
+            </div>
+
+            @if(($fornXml['endereco'] ?? null))
+              @php $e = $fornXml['endereco']; @endphp
+              <div class="col-md-2">
+                <label class="form-label">CEP</label>
+                <input class="form-control" value="{{ $e['cep'] ?? '' }}" disabled>
+                <input type="hidden" name="fornecedor_new[endereco][cep]" value="{{ $e['cep'] ?? '' }}">
+              </div>
+              <div class="col-md-1">
+                <label class="form-label">UF</label>
+                <input class="form-control" value="{{ $e['uf'] ?? '' }}" disabled>
+                <input type="hidden" name="fornecedor_new[endereco][uf]" value="{{ $e['uf'] ?? '' }}">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Cidade</label>
+                <input class="form-control" value="{{ $e['cidade'] ?? '' }}" disabled>
+                <input type="hidden" name="fornecedor_new[endereco][cidade]" value="{{ $e['cidade'] ?? '' }}">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Bairro</label>
+                <input class="form-control" value="{{ $e['bairro'] ?? '' }}" disabled>
+                <input type="hidden" name="fornecedor_new[endereco][bairro]" value="{{ $e['bairro'] ?? '' }}">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Logradouro</label>
+                <input class="form-control" value="{{ $e['logradouro'] ?? '' }}" disabled>
+                <input type="hidden" name="fornecedor_new[endereco][logradouro]" value="{{ $e['logradouro'] ?? '' }}">
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Número</label>
+                <input class="form-control" value="{{ $e['numero'] ?? '' }}" disabled>
+                <input type="hidden" name="fornecedor_new[endereco][numero]" value="{{ $e['numero'] ?? '' }}">
+              </div>
+            @endif
+
+            <div class="form-text">
+              Os dados acima serão usados para criar o fornecedor automaticamente.
+            </div>
+          </div>
+        @endif
       </div>
     </div>
 
-    {{-- Itens / Produtos --}}
+    {{-- Itens / Produtos (auto: vincula por EAN ou prepara criação) --}}
     <div class="card shadow-sm mb-3">
       <div class="card-header d-flex align-items-center gap-2">
         <i class="fa-solid fa-box-open"></i>
@@ -131,8 +150,7 @@
                 <th>Descrição</th>
                 <th class="text-mono">EAN</th>
                 <th class="text-mono">NCM</th>
-                <th>Modo</th>
-                <th style="width:360px">Vincular / Cadastrar</th>
+                <th style="width:460px">Vinculado / Cadastro</th>
                 <th class="text-end" style="width:120px">Qtd</th>
                 <th class="text-end" style="width:140px">Valor Unit.</th>
               </tr>
@@ -140,59 +158,73 @@
             <tbody>
               @foreach($draft['itens'] as $it)
                 @php
-                  $idx      = $it['index'];
-                  $sugId    = $prodSugestoes[$idx] ?? null;
-                  $prodList = \App\Models\Produto::orderBy('descricao')->limit(200)->get(['id','descricao','codigo_barras']);
+                  $idx        = $it['index'];
+                  $ean        = trim((string)($it['ean'] ?? ''));
+                  $ncm        = $it['ncm_code'] ?? null;
+
+                  // Procura produto pelo código de barras
+                  $produtoEncontrado = null;
+                  if ($ean !== '') {
+                    $produtoEncontrado = \App\Models\Produto::where('codigo_barras', $ean)->first();
+                  }
                 @endphp
                 <tr>
                   <td>{{ $it['descricao'] }}</td>
-                  <td class="text-mono">{{ $it['ean'] ?: '—' }}</td>
-                  <td class="text-mono">{{ $it['ncm_code'] ?: '00000000' }}</td>
-
-                  <td style="width:140px">
-                    <select name="produtos[{{ $idx }}][mode]" class="form-select form-select-sm js-prod-mode" data-row="{{ $idx }}">
-                      <option value="link" {{ $sugId ? 'selected' : '' }}>Vincular</option>
-                      <option value="new"  {{ $sugId ? '' : 'selected' }}>Criar</option>
-                    </select>
-                  </td>
+                  <td class="text-mono">{{ $ean !== '' ? $ean : '—' }}</td>
+                  <td class="text-mono">{{ $ncm ?: '00000000' }}</td>
 
                   <td>
-                    {{-- Vincular existente --}}
-                    <div data-prod-row="{{ $idx }}" data-mode="link" class="{{ $sugId ? '' : 'd-none' }}">
-                      <select name="produtos[{{ $idx }}][product_id]" class="form-select form-select-sm">
-                        <option value="">Selecione um produto...</option>
-                        @foreach($prodList as $p)
-                          <option value="{{ $p->id }}" {{ (string)$sugId === (string)$p->id ? 'selected' : '' }}>
-                            {{ $p->descricao }} @if($p->codigo_barras) — {{ $p->codigo_barras }} @endif
-                          </option>
-                        @endforeach
-                      </select>
-                    </div>
+                    @if($produtoEncontrado)
+                      {{-- Vinculado automaticamente --}}
+                      <div class="alert alert-success py-2 px-3 mb-2 d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-link"></i>
+                        <div class="small">
+                          <strong>Produto vinculado automaticamente pelo EAN.</strong><br>
+                          {{ $produtoEncontrado->descricao }}
+                          @if($produtoEncontrado->codigo_barras)
+                            — <span class="text-mono">{{ $produtoEncontrado->codigo_barras }}</span>
+                          @endif
+                        </div>
+                      </div>
+                      <input type="hidden" name="produtos[{{ $idx }}][product_id]" value="{{ $produtoEncontrado->id }}">
+                      <input type="hidden" name="produtos[{{ $idx }}][mode]" value="link">
+                    @else
+                      {{-- Não encontrou: preparar criação automática --}}
+                      <div class="alert alert-warning py-2 px-3 mb-2 d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <div class="small">
+                          <strong>Produto não encontrado pelo EAN.</strong> Vamos cadastrar automaticamente.
+                        </div>
+                      </div>
 
-                    {{-- Criar novo rapidamente --}}
-                    <div data-prod-row="{{ $idx }}" data-mode="new" class="{{ $sugId ? 'd-none' : '' }}">
+                      <input type="hidden" name="produtos[{{ $idx }}][mode]" value="new">
                       <div class="row g-2">
                         <div class="col-md-7">
-                          <input name="produtos[{{ $idx }}][new][descricao]" class="form-control form-control-sm" value="{{ $it['descricao'] }}">
+                          <input name="produtos[{{ $idx }}][new][descricao]" class="form-control form-control-sm"
+                                 value="{{ $it['descricao'] }}" placeholder="Descrição do produto" required>
                         </div>
                         <div class="col-md-5">
-                          <input name="produtos[{{ $idx }}][new][codigo_barras]" class="form-control form-control-sm text-mono" placeholder="EAN (opcional)" value="{{ $it['ean'] }}">
+                          <input name="produtos[{{ $idx }}][new][codigo_barras]" class="form-control form-control-sm text-mono"
+                                 placeholder="EAN (opcional)" value="{{ $ean }}">
                         </div>
                         <div class="col-md-6">
-                          <select name="produtos[{{ $idx }}][new][categoria_produto]" class="form-select form-select-sm">
+                          <select name="produtos[{{ $idx }}][new][categoria_produto]" class="form-select form-select-sm" required>
+                            <option value="">Selecione uma categoria...</option>
                             @foreach($categorias as $c)
                               <option value="{{ $c->id }}">{{ $c->descricao }}</option>
                             @endforeach
                           </select>
                         </div>
                         <div class="col-md-3">
-                          <input name="produtos[{{ $idx }}][new][unidade_medida]" class="form-control form-control-sm" value="{{ $it['unidade'] ?? 'UN' }}">
+                          <input name="produtos[{{ $idx }}][new][unidade_medida]" class="form-control form-control-sm"
+                                 value="{{ $it['unidade'] ?? 'UN' }}" placeholder="UN. Medida">
                         </div>
                         <div class="col-md-3">
-                          <input name="produtos[{{ $idx }}][new][preco_venda]" class="form-control form-control-sm text-end text-mono" value="{{ number_format($it['valor_unit'],2,',','.') }}">
+                          <input name="produtos[{{ $idx }}][new][preco_venda]" class="form-control form-control-sm text-end text-mono"
+                                 value="{{ number_format($it['valor_unit'],2,',','.') }}" placeholder="Preço de venda">
                         </div>
                       </div>
-                    </div>
+                    @endif
                   </td>
 
                   <td class="text-end text-mono">{{ number_format($it['quantidade'], 3, ',', '.') }}</td>
@@ -211,32 +243,4 @@
       </div>
     </div>
   </form>
-
-  @push('scripts')
-  <script>
-  // Alternância "Vincular" x "Criar" por item usando classe d-none
-  document.querySelectorAll('.js-prod-mode').forEach(sel => {
-    sel.addEventListener('change', () => {
-      const idx = sel.dataset.row;
-      document.querySelectorAll(`[data-prod-row="${idx}"]`).forEach(div => {
-        const shouldShow = (div.getAttribute('data-mode') === sel.value);
-        div.classList.toggle('d-none', !shouldShow);
-      });
-    });
-  });
-
-  // Alternância do fornecedor (link/new) usando classe d-none
-  const fSel = document.getElementById('fornecedor_mode');
-  if (fSel){
-    const updateF = () => {
-      document.querySelectorAll('[data-fornecedor]').forEach(div => {
-        const shouldShow = (div.getAttribute('data-fornecedor') === fSel.value);
-        div.classList.toggle('d-none', !shouldShow);
-      });
-    };
-    fSel.addEventListener('change', updateF);
-    updateF();
-  }
-  </script>
-  @endpush
 @endif

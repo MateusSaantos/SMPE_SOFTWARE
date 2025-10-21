@@ -10,6 +10,7 @@ use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\NotaFiscalController;
 use App\Http\Controllers\NotaFiscalItemController;
 use App\Http\Controllers\SimulacaoPrecoController;
+use App\Http\Controllers\EducativosController;
 
 // Página inicial redireciona para login ou dashboard
 Route::get('/', function () {
@@ -87,5 +88,9 @@ Route::group([
     Route::post  ('/simulacoes-precos',        [SimulacaoPrecoController::class, 'store'])->name('simulacoes-precos.store');
     Route::delete('/simulacoes-precos/{simulacao}', [SimulacaoPrecoController::class, 'destroy'])->name('simulacoes-precos.destroy');
 
+    // Conteúdos educativos
+    Route::get('/educativos', [EducativosController::class, 'index'])->name('educativos.index');
+    Route::get('/educativos/{slug}', [EducativosController::class, 'show'])->name('educativos.show');
+    Route::post('/educativos/{id}/toggle-visited', [EducativosController::class, 'toggleVisited'])->name('educativos.toggleVisited');
     // (demais rotas internas que exigem usuário logado...)
 });

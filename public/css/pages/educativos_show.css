@@ -1,0 +1,82 @@
+/* ===== Educativos · SHOW (tokens do sistema) ===== */
+
+/* Escopo: força a paleta roxa apenas nesta página */
+.edc-show{
+  --brand-primary: #6f42c1; /* roxo final */
+  --brand-600:     #6f42c1;
+  --brand-500:     #6f42c1;
+  --brand-accent:  #5a34a0; /* roxo ~15% mais escuro p/ bordas/sombras */
+  color:#111827;
+}
+
+/* Hero topo */
+.show-hero{ position:relative; margin-bottom:14px; }
+.show-hero__bg{
+  position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(700px 320px at 0% 10%,  color-mix(in srgb, #6f42c1 22%, transparent), transparent 65%),
+    radial-gradient(520px 260px at 100% 0%, color-mix(in srgb, #5a34a0 18%, transparent), transparent 65%),
+    linear-gradient(180deg, var(--bg-page), var(--bg-soft));
+}
+.show-hero__container{
+  position:relative; max-width:1040px; margin:0 auto; padding:24px 12px;
+  display:flex; gap:14px; align-items:flex-end; justify-content:space-between; flex-wrap:wrap;
+}
+.show-hero__copy{
+  background: linear-gradient(180deg, #ffffff, color-mix(in srgb, #6f42c1 10%, #ffffff));
+  border:1px solid color-mix(in srgb, #6f42c1 22%, var(--line-soft));
+  border-radius: var(--radius-12);
+  padding:16px 18px; box-shadow: var(--shadow-md);
+}
+.show-hero__title{ margin:0; font-size:1.85rem; color: var(--brand-600); }
+.show-hero__chips{ margin-top:8px; display:flex; gap:8px; flex-wrap:wrap; }
+.chip{
+  display:inline-flex; align-items:center; gap:8px; font-size:.9rem;
+  background: color-mix(in srgb, #6f42c1 6%, var(--bg-soft));
+  color:#334155; border:1px solid var(--line-soft);
+  padding:6px 10px; border-radius: var(--radius-pill);
+}
+
+/* Ações (alinhadas e mesma altura dos controles) */
+.show-hero__actions{ display:flex; gap:10px; align-items:end; }
+.btn{
+  display:inline-flex; align-items:center; gap:8px;
+  height:46px; padding:0 16px;
+  border-radius: var(--radius-12); border:1px solid var(--line-soft);
+  cursor:pointer; font-weight:600;
+}
+.btn--soft{ background: var(--bg-soft); color: var(--brand-600); }
+.btn--soft:hover{ background: var(--bg-soft-2); }
+.btn--ghost{ background:#fff; color: var(--brand-600); }
+.btn--ghost:hover{ background: var(--bg-soft); color:#0f172a; }
+
+/* Corpo */
+.show-body{
+  max-width:1040px; margin:0 auto; padding:0 12px 24px;
+  display:grid; grid-template-columns: 1fr 300px; gap:16px;
+}
+@media (max-width: 980px){ .show-body{ grid-template-columns:1fr; } }
+
+.content{
+  background: var(--bg-panel);
+  border:1px solid var(--line-soft); border-radius: var(--radius-12);
+  box-shadow: var(--shadow-sm); padding:18px 20px;
+}
+.content h2, .content h3{ margin-top:18px; color:#111827; }
+.content p{ color:#4b5563; }
+
+/* Links úteis */
+.links{
+  background: var(--bg-panel); border: 1px solid var(--line-soft);
+  border-radius: var(--radius-12); box-shadow: var(--shadow-sm);
+  padding:16px;
+}
+.links h3{ margin:0 0 10px; color: var(--brand-600); }
+.links ul{ list-style:none; padding:0; margin:0; display:grid; gap:8px; }
+.links a{
+  display:inline-flex; align-items:center; gap:8px; text-decoration:none;
+  color: var(--brand-600);
+  background: color-mix(in srgb, #6f42c1 10%, #fff);
+  padding:8px 10px; border-radius: var(--radius-12); border:1px solid var(--line-soft);
+}
+.links a:hover{ background: color-mix(in srgb, #6f42c1 16%, #fff); }
