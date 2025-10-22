@@ -89,8 +89,9 @@ Route::group([
     Route::delete('/simulacoes-precos/{simulacao}', [SimulacaoPrecoController::class, 'destroy'])->name('simulacoes-precos.destroy');
 
     // Conteúdos educativos
-    Route::get('/educativos', [EducativosController::class, 'index'])->name('educativos.index');
-    Route::get('/educativos/{slug}', [EducativosController::class, 'show'])->name('educativos.show');
-    Route::post('/educativos/{id}/toggle-visited', [EducativosController::class, 'toggleVisited'])->name('educativos.toggleVisited');
+    Route::get('/educativos',                [EducativosController::class, 'index'])->name('educativos.index');          // categorias
+    Route::get('/educativos/c/{catSlug}',    [EducativosController::class, 'categoryList'])->name('educativos.category'); // itens por categoria
+    Route::get('/educativos/{slug}',         [EducativosController::class, 'show'])->name('educativos.show');            // conteúdo
+    Route::post('/educativos/{id}/toggle',   [EducativosController::class, 'toggleVisited'])->name('educativos.toggleVisited');
     // (demais rotas internas que exigem usuário logado...)
 });
