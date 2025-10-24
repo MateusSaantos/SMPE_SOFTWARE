@@ -1,13 +1,13 @@
 {{-- resources/views/simulacoes_precos/create.blade.php --}}
 @extends('layout')
-
 @section('conteudo')
+
 @push('styles')
   <link href="{{ asset('css/pages/categorias_create.css') }}" rel="stylesheet">
   <style>
     /* Área de lista de produtos com rolagem */
     .product-list-scroll{
-      max-height: 60vh;
+      max-height: 90vh;
       overflow: auto;
       border: 1px solid rgba(0,0,0,.05);
       border-radius: .5rem;
@@ -22,6 +22,30 @@
     @media (max-width: 991.98px){
       .product-list-scroll{ max-height: 40vh; }
     }
+
+    /* Hint bubble styling */
+    .hint-bubble{
+      background:#fff;
+      border:1px solid rgba(0,0,0,.06);
+      padding:.75rem;
+      border-radius:.5rem;
+      box-shadow:0 2px 8px rgba(0,0,0,.04);
+    }
+    .hint-bubble__arrow{
+      position:absolute;
+      width:10px;
+      height:10px;
+      transform:rotate(45deg);
+      background:#fff;
+      left:1.25rem;
+      top:100%;
+      border-left:1px solid rgba(0,0,0,.06);
+      border-bottom:1px solid rgba(0,0,0,.06);
+    }
+
+    /* Resultado dinâmico */
+    .resultado-preview { margin-top: .75rem; }
+    .resultado-preview .small-muted { color: #6b7280; font-size:.9rem; }
   </style>
 @endpush
 
@@ -35,21 +59,22 @@
         <p class="page-head__subtitle">Selecione um produto e simule o preço de venda com base em custos, tributos e margem.</p>
       </div>
     </div>
+
     <button type="button" class="btn btn-outline-primary btn-help"
             data-bs-toggle="popover"
             data-bs-title="Como usar o simulador?"
-            data-bs-content="1) Selecione um produto. 2) Preencha custos, tributos e a margem desejada. 3) Calcule para ver preço sugerido, impostos e lucro.">
+            data-bs-content="1) Selecione um produto. 2) Preencha custos, tributos e a margem desejada. 3) Veja a pré-visualização dinâmica antes de salvar.">
       <i class="fa-regular fa-circle-question me-2"></i> Ajuda
     </button>
   </div>
 
   {{-- Hint/coachmark --}}
-  <div class="hint-bubble" id="hint-simulador-precos" role="status" aria-live="polite">
+  <div class="hint-bubble" id="hint-simulador-precos" role="status" aria-live="polite" style="position:relative;">
     <div class="d-flex align-items-start gap-2">
       <i class="fa-regular fa-circle-question hint-bubble__icon mt-1"></i>
       <div class="flex-grow-1">
         <strong>Passo a passo:</strong><br>
-        Primeiro selecione o <em>produto</em> na lista ao lado. Depois, preencha os campos e calcule o preço sugerido.
+        Primeiro selecione o <em>produto</em> na lista ao lado. Depois, preencha os campos e veja a <strong>pré-visualização dinâmica</strong> antes de salvar.
       </div>
       <button type="button" class="btn btn-sm btn-outline-secondary hint-bubble__close" id="hint-close" style="display:none;">Entendi</button>
     </div>
@@ -66,6 +91,8 @@
     <div class="col-12 col-lg-8">
       <form method="POST" action="{{ route('simulacoes-precos.store') }}" class="needs-validation" novalidate id="form-simulador">
         @csrf
+        <input type="hidden" name="margem_calculo" value="margin">
+        
         <input type="hidden" name="produto_id" id="produto_id" value="{{ old('produto_id') }}"/>
 
         <div class="card shadow-sm">
@@ -93,51 +120,60 @@
             </div>
 
             <div class="row g-3">
+              {{-- MONEY INPUTS: text com máscara visual --}}
               <div class="col-md-4">
                 <label class="form-label">Preço de Custo</label>
-                <input type="number" step="0.01" name="preco_custo" class="form-control" required value="{{ old('preco_custo') }}">
+                <input type="text" name="preco_custo" class="form-control input-money" required value="{{ old('preco_custo') }}">
                 <div class="invalid-feedback">Informe o preço de custo.</div>
               </div>
+
               <div class="col-md-4">
                 <label class="form-label">Frete (unitário)</label>
-                <input type="number" step="0.01" name="frete" class="form-control" value="{{ old('frete', 0) }}">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Outras Despesas</label>
-                <input type="number" step="0.01" name="outras_despesas" class="form-control" value="{{ old('outras_despesas', 0) }}">
+                <input type="text" name="frete" class="form-control input-money" value="{{ old('frete', 0) }}">
               </div>
 
-              <div class="col-md-3">
-                <label class="form-label">ICMS (%)</label>
-                <input type="number" step="0.01" name="icms" class="form-control" placeholder="18" required value="{{ old('icms') }}">
+              <div class="col-md-4">
+                <label class="form-label">Outras Despesas</label>
+                <input type="text" name="outras_despesas" class="form-control input-money" value="{{ old('outras_despesas', 0) }}">
+              </div>
+
+              {{-- PERCENT INPUTS: permitem vírgula, 0..100 --}}
+              <div class="col-md-4">
+                <label class="form-label">ICMS (0–100%)</label>
+                <div class="input-group">
+                  <input type="text" name="icms" class="form-control input-percent" placeholder="18" required value="{{ old('icms') }}">
+                  <span class="input-group-text">%</span>
+                </div>
                 <div class="invalid-feedback">Informe o ICMS.</div>
               </div>
-              <div class="col-md-3">
-                <label class="form-label">PIS (%)</label>
-                <input type="number" step="0.01" name="pis" class="form-control" placeholder="1.65" required value="{{ old('pis') }}">
+
+              <div class="col-md-4">
+                <label class="form-label">PIS (0–99%)</label>
+                <div class="input-group">
+                  <input type="text" name="pis" class="form-control input-percent" placeholder="1,65" required value="{{ old('pis') }}">
+                  <span class="input-group-text">%</span>
+                </div>
                 <div class="invalid-feedback">Informe o PIS.</div>
               </div>
-              <div class="col-md-3">
-                <label class="form-label">COFINS (%)</label>
-                <input type="number" step="0.01" name="cofins" class="form-control" placeholder="7.60" required value="{{ old('cofins') }}">
+
+              <div class="col-md-4">
+                <label class="form-label">COFINS (0–99%)</label>
+                <div class="input-group">
+                  <input type="text" name="cofins" class="form-control input-percent" placeholder="7,60" required value="{{ old('cofins') }}">
+                  <span class="input-group-text">%</span>
+                </div>
                 <div class="invalid-feedback">Informe o COFINS.</div>
               </div>
 
-              <div class="col-md-3">
-                <label class="form-label">Modo de Margem</label>
-                <select name="margem_calculo" class="form-select">
-                  <option value="markup" {{ (old('margem_calculo','markup')==='markup') ? 'selected' : '' }}>Mark-up sobre custo</option>
-                  <option value="margin" {{ (old('margem_calculo')==='margin') ? 'selected' : '' }}>Margem líquida no preço</option>
-                </select>
-              </div>
+              {{-- REMOVIDO: select de modo de margem (o cálculo agora é único — margem líquida no preço) --}}
 
-              <div class="col-md-3">
-                <label class="form-label">Margem Desejada (%)</label>
-                <input type="number" step="0.01" name="margem_lucro" class="form-control" placeholder="25" required value="{{ old('margem_lucro') }}">
+              <div class="col-md-4">
+                <label class="form-label">Margem Desejada (0–99%)</label>
+                <input type="text" name="margem_lucro" class="form-control input-percent" placeholder="25" required value="{{ old('margem_lucro') }}">
                 <div class="invalid-feedback">Informe a margem desejada.</div>
               </div>
 
-              <div class="col-md-3">
+              <div class="col-md-8">
                 <label class="form-label">Tipo de Simulação</label>
                 <select name="tipo_simulacao" class="form-select">
                   <option value="">—</option>
@@ -154,21 +190,42 @@
               </div>
             </div>
 
-            <div class="mt-3 d-flex gap-2">
+            {{-- Botões e preview --}}
+            <div class="mt-3 d-flex gap-2 align-items-center">
               <button class="btn btn-primary">
                 <i class="fa-solid fa-calculator me-2"></i> Calcular & Salvar
               </button>
+
+              <button type="button" class="btn btn-outline-secondary" id="btn-calcular-preview" title="Atualizar pré-visualização">Pré-visualizar</button>
+              <div class="ms-auto text-end small-muted d-none d-md-block">
+                <div><strong>Observação:</strong> Insira valores com vírgula ou ponto; o campo será normalizado. Percentuais aceitos: 0 a 99.</div>
+              </div>
             </div>
+
+            {{-- Resultado dinâmico (preview) --}}
+            <div class="resultado-preview" id="resultado-preview" style="display:none;">
+              <hr>
+              <h6 class="mb-2">Pré-visualização</h6>
+              <ul class="list-unstyled mb-0">
+                <li><strong>Preço sugerido:</strong> <span id="rp-preco">—</span></li>
+                <li><strong>Custo base:</strong> <span id="rp-custo">—</span></li>
+                <li><strong>Tributos (total %):</strong> <span id="rp-tributo-pct">—</span>% (<span id="rp-tributo-val">—</span>)</li>
+                <li><strong>Lucro estimado:</strong> <span id="rp-lucro">—</span></li>
+                <li><strong>Margem efetiva:</strong> <span id="rp-margem-ef">—</span>%</li>
+                <li><strong>Markup efetivo:</strong> <span id="rp-markup-ef">—</span>%</li>
+              </ul>
+            </div>
+
           </div>
         </div>
       </form>
 
-      {{-- Resultado --}}
+      {{-- Resultado após submit (server) --}}
       @if(session('calc'))
         @php $c = session('calc'); @endphp
         <div class="card mt-3 shadow-sm">
           <div class="card-body">
-            <h5 class="mb-3">Resultado da Simulação</h5>
+            <h5 class="mb-3">Resultado da Simulação (salvo)</h5>
             <ul class="list-unstyled">
               <li><strong>Preço sugerido:</strong> R$ {{ number_format($c['preco_sugerido'],2,',','.') }}</li>
               <li><strong>Custo base:</strong> R$ {{ number_format($c['custo_base'],2,',','.') }}</li>
@@ -180,6 +237,7 @@
           </div>
         </div>
       @endif
+
     </div>
 
     {{-- Lista de produtos direita --}}
@@ -218,7 +276,7 @@
                   </td>
                   <td class="text-end">
                     <div class="btn-group">
-                      {{-- Ícone somente: Visualizar --}}
+                      {{-- Visualizar --}}
                       <button type="button"
                               class="btn btn-sm btn-outline-info btn-visualizar-produto"
                               title="Visualizar"
@@ -241,7 +299,7 @@
                         <i class="fa-regular fa-eye"></i>
                       </button>
 
-                      {{-- Ícone somente: Selecionar --}}
+                      {{-- Selecionar --}}
                       <button type="button"
                               class="btn btn-sm btn-outline-success btn-selecionar-produto"
                               title="Selecionar"
@@ -316,20 +374,22 @@
 
 @push('scripts')
 <script>
-  // Popover Bootstrap
+  // --- BOOTSTRAP POPPOVERS ---
   document.querySelectorAll('[data-bs-toggle="popover"]').forEach(el => {
     new bootstrap.Popover(el, { trigger: 'focus' });
   });
 
-  // Coachmark
+  // Coachmark show
   (function(){
-    document.getElementById('hint-simulador-precos')?.classList.remove('d-none');
+    const hb = document.getElementById('hint-simulador-precos');
+    if (hb) hb.classList.remove('d-none');
   })();
 
-  // Validação e exigência de produto
+  // --- FORM VALIDATION & REQUIREMENT OF PRODUCT ---
   (function () {
     'use strict';
     const forms = document.querySelectorAll('.needs-validation');
+
     Array.from(forms).forEach(function (form) {
       form.addEventListener('submit', function (event) {
         const prodId = document.getElementById('produto_id').value;
@@ -340,13 +400,16 @@
         }
         if (!form.checkValidity()) {
           event.preventDefault(); event.stopPropagation();
+        } else {
+          // Before submit: ensure money and percent fields are normalized
+          normalizeAllForSubmit();
         }
         form.classList.add('was-validated');
       }, false);
     });
   })();
 
-  // Seleção + Modal
+  // --- PRODUCT SELECTION / MODAL HANDLERS ---
   (function () {
     const inputId = document.getElementById('produto_id');
     const selCard = document.getElementById('selected-product');
@@ -437,6 +500,204 @@
       }
     }
   })();
+
+  // --- FORMATTING & NORMALIZATION HELPERS ---
+  (function(){
+    // Intl numberformat for pt-BR (2 decimals)
+    const nf = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    // Format money input for display (accepts many user forms)
+    function formatBRMoney(str){
+      if(str === null || str === undefined || str === '') return '';
+      let v = String(str).trim();
+      v = v.replace(/\s+/g,'');
+      // Keep digits, dot, comma, minus
+      v = v.replace(/[^\d\.,-]/g, '');
+
+      // If both dot and comma => assume '.' thousands, ',' decimal
+      if (v.indexOf('.') !== -1 && v.indexOf(',') !== -1) {
+        v = v.replace(/\./g, '');
+        v = v.replace(',', '.');
+      } else if (v.indexOf(',') !== -1) {
+        // only comma -> convert to dot for parse
+        v = v.replace(',', '.');
+      }
+      // Now parse
+      const num = Number(v);
+      if (isNaN(num)) return '';
+      return nf.format(num);
+    }
+
+    // Convert BR string (1.234,56 or 1234,56 or 1234.56) to standard numeric string "1234.56"
+    function brToNumberString(br){
+      if (br === null || br === undefined || br === '') return '';
+      let v = String(br).trim();
+      v = v.replace(/\s+/g,'');
+      v = v.replace(/\./g, ''); // remove thousands dots
+      v = v.replace(/,/g, '.'); // comma -> dot
+      v = v.replace(/[^0-9\.\-]/g, '');
+      return v;
+    }
+
+    // Normalize percent display: clamp 0..100 and format using comma
+    function normalizePercentDisplay(str){
+      if (str === null || str === undefined || str === '') return '';
+      // build numeric from input
+      const numericString = brToNumberString(str); // dot decimal
+      let n = Number(numericString);
+      if (isNaN(n)) return '';
+      // clamp 0..100
+      if (n < 0) n = 0;
+      if (n > 100) n = 100;
+      // Format with comma decimal if fraction exists, else integer
+      const hasFraction = (Math.abs(n - Math.trunc(n)) > 0);
+      return n.toLocaleString('pt-BR', { minimumFractionDigits: hasFraction ? 2 : 0, maximumFractionDigits: 2 });
+    }
+
+    // Apply formatting behavior
+    document.querySelectorAll('.input-money').forEach(input => {
+      if (input.value) input.value = formatBRMoney(input.value);
+
+      input.addEventListener('blur', (e) => {
+        e.target.value = formatBRMoney(e.target.value);
+      });
+
+      input.addEventListener('input', (e) => {
+        // allow only digits, dot, comma, minus while typing
+        e.target.value = e.target.value.replace(/[^\d\.,-]/g,'');
+      });
+    });
+
+    document.querySelectorAll('.input-percent').forEach(input => {
+      if (input.value) input.value = normalizePercentDisplay(input.value);
+
+      input.addEventListener('blur', (e) => {
+        e.target.value = normalizePercentDisplay(e.target.value);
+      });
+
+      input.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/[^\d\.,-]/g,'');
+      });
+    });
+
+    // Called before actual form submit to convert fields to backend-friendly numeric strings
+    window.normalizeAllForSubmit = function() {
+      // money fields -> "1234.56"
+      document.querySelectorAll('.input-money').forEach(inp => {
+        const normalized = brToNumberString(inp.value);
+        inp.value = normalized === '' ? '0' : normalized;
+      });
+      // percent fields -> "18.5" (string with dot decimal), clamped 0..100
+      document.querySelectorAll('.input-percent').forEach(inp => {
+        let normalized = brToNumberString(inp.value);
+        let n = Number(normalized);
+        if (isNaN(n)) n = 0;
+        if (n < 0) n = 0;
+        if (n > 100) n = 100;
+        // send with dot decimal
+        inp.value = Number(n).toString();
+      });
+    };
+
+  })();
+
+  // --- DYNAMIC PREVIEW CALCULATION (USANDO APENAS MARGEM LÍQUIDA NO PREÇO) ---
+  (function(){
+    // Helpers to parse current inputs to numbers
+    function parseMoneyField(selector) {
+      const el = document.querySelector(selector);
+      if (!el) return 0;
+      const v = el.value ?? '';
+      const n = Number(String(v).replace(/\./g,'').replace(/,/g,'.'));
+      return isNaN(n) ? 0 : n;
+    }
+    function parsePercentField(selector) {
+      const el = document.querySelector(selector);
+      if (!el) return 0;
+      let v = el.value ?? '';
+      v = String(v).replace(/\./g,'').replace(/,/g,'.');
+      const n = Number(v);
+      // clamp 0..100
+      if (isNaN(n)) return 0;
+      if (n < 0) return 0;
+      if (n > 100) return 100;
+      return n;
+    }
+
+    // Format currency for display
+    const displayNF = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits:2, maximumFractionDigits:2 });
+    function displayMoney(num) {
+      if (num === null || num === undefined || isNaN(num)) return '—';
+      return displayNF.format(Number(num));
+    }
+    function displayPercent(num) {
+      if (num === null || num === undefined || isNaN(num)) return '—';
+      return Number(num).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function calcularPreview(){
+      // leitura
+      const custo = parseMoneyField('input[name="preco_custo"]');
+      const frete = parseMoneyField('input[name="frete"]');
+      const outras = parseMoneyField('input[name="outras_despesas"]');
+      const icms = parsePercentField('input[name="icms"]');
+      const pis = parsePercentField('input[name="pis"]');
+      const cofins = parsePercentField('input[name="cofins"]');
+      const margem = parsePercentField('input[name="margem_lucro"]');
+
+      // Custo base
+      const C = Number((custo + frete + outras).toFixed(6));
+
+      // ===== CÁLCULO TRADICIONAL APLICADO (MARGEM LÍQUIDA NO PREÇO) =====
+      // Preço = C / (1 - m), onde m = margem/100
+      let preco = 0;
+      const m = Number(margem) / 100;
+      if (m >= 1) {
+        preco = NaN; // margem inválida (>=100%)
+      } else {
+        preco = C / (1 - m);
+      }
+
+      // tributos assumidos como % sobre o preço final (simplificação)
+      const tributosPct = (Number(icms) + Number(pis) + Number(cofins));
+      const tributosVal = (isNaN(preco) ? NaN : preco * (tributosPct / 100));
+
+      // lucro estimado = preco - custo base - tributos
+      const lucro = (isNaN(preco) || isNaN(tributosVal)) ? NaN : (preco - C - tributosVal);
+
+      // margem efetiva = lucro / preco
+      const margemEf = (isNaN(preco) || preco === 0) ? NaN : (lucro / preco);
+      // markup efetivo em relação ao custo = (preço - custo) / custo
+      const markupEf = (C === 0) ? NaN : ((preco - C) / C);
+
+      // Atualiza DOM
+      const preview = document.getElementById('resultado-preview');
+      document.getElementById('rp-custo').textContent = displayMoney(C);
+      document.getElementById('rp-preco').textContent = isNaN(preco) ? '—' : displayMoney(preco);
+      document.getElementById('rp-tributo-pct').textContent = isNaN(tributosPct) ? '—' : displayPercent(tributosPct);
+      document.getElementById('rp-tributo-val').textContent = isNaN(tributosVal) ? '—' : displayMoney(tributosVal);
+      document.getElementById('rp-lucro').textContent = isNaN(lucro) ? '—' : displayMoney(lucro);
+      document.getElementById('rp-margem-ef').textContent = isNaN(margemEf) ? '—' : (Number(margemEf) * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      document.getElementById('rp-markup-ef').textContent = isNaN(markupEf) ? '—' : (Number(markupEf) * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      preview.style.display = 'block';
+    }
+
+    // Trigger preview on pressing the preview button and on blur of relevant fields
+    document.getElementById('btn-calcular-preview')?.addEventListener('click', function(){ calcularPreview(); });
+
+    ['input[name="preco_custo"]','input[name="frete"]','input[name="outras_despesas"]','input[name="icms"]','input[name="pis"]','input[name="cofins"]','input[name="margem_lucro"]'].forEach(sel => {
+      document.querySelectorAll(sel).forEach(el => {
+        el.addEventListener('blur', function(){ calcularPreview(); });
+        el.addEventListener('change', function(){ calcularPreview(); });
+      });
+    });
+
+    // Inicializa preview se houver valores pré-carregados
+    window.addEventListener('load', function(){ setTimeout(calcularPreview, 250); });
+
+  })();
 </script>
 @endpush
+
 @endsection
