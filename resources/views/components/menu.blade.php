@@ -57,7 +57,7 @@
     </li>
 
     <!-- Empresa -->
-    <li class="has-submenu {{ $isOpen(['empresas.*','educativos.*']) }}">
+    <li class="has-submenu {{ $isOpen(['empresas.*']) }}">
       <div class="menu-item-top">
         <div class="menu-item-label">
           <i class="fas fa-building"></i> Empresa
@@ -66,13 +66,27 @@
       </div>
       <ul class="submenu">
         <li>
-          <a class="{{ $isActive('empresas.*') }}" href="{{ $cnpjLogado ? route('empresas.create_user', ['cnpj' => $cnpjLogado]) : route('empresas.create_user') }}">
+          <a class="{{ $isActive('empresas.*') }}"
+             href="{{ $cnpjLogado ? route('empresas.create_user', ['cnpj' => $cnpjLogado]) : route('empresas.create_user') }}">
             <i class="fas fa-user-plus"></i> Criar usuário
           </a>
         </li>
+      </ul>
+    </li>
+
+    <!-- Educativos (MENU PRINCIPAL COM SUBMENU) -->
+    <li class="has-submenu {{ $isOpen(['educativos.*']) }}">
+      <div class="menu-item-top">
+        <div class="menu-item-label">
+          <i class="fas fa-chalkboard-teacher"></i> Educativos
+        </div>
+        <span class="submenu-icon"><i class="fas fa-chevron-down"></i></span>
+      </div>
+      <ul class="submenu">
         <li>
-          <a class="{{ $isActive(['educativos.index','educativos.show']) }}" href="{{ route('educativos.index') }}">
-            <i class="fas fa-chalkboard-teacher"></i> Educativos
+          <a class="{{ $isActive(['educativos.index','educativos.show']) }}"
+             href="{{ route('educativos.index') }}">
+            <i class="fas fa-book-open"></i> Centro educativo
           </a>
         </li>
       </ul>
