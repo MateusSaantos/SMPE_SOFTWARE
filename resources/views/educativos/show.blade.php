@@ -6,7 +6,7 @@
   <link href="{{ asset('css/base/variables.css') }}" rel="stylesheet">
   <link href="{{ asset('css/base/backgrounds.css') }}" rel="stylesheet">
   <link href="{{ asset('css/pages/educativos_show.css') }}?v={{ filemtime(public_path('css/pages/educativos_show.css')) }}" rel="stylesheet">
-    <link href="{{ asset('css/pages/categorias_create.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/pages/categorias_create.css') }}" rel="stylesheet">
 
   {{-- Fallback mínimo para .btn--ghost --}}
   <style>
@@ -35,7 +35,7 @@
       </div>
     </div>
 
-    {{-- Botão de ajuda (Popover Bootstrap) --}}
+    {{-- Botão de ajuda --}}
     <button type="button"
             class="btn btn-outline-primary btn-help"
             data-bs-toggle="popover"
@@ -59,7 +59,7 @@
     <span class="hint-bubble__arrow"></span>
   </div>
 
-  {{-- Botões de ação (logo abaixo da dica) --}}
+  {{-- Botões de ação --}}
   <div class="mt-3 mb-3 d-flex flex-wrap gap-2">
     <a class="btn btn-primary" href="{{ route('educativos.index') }}">
       <i class="fa-solid fa-arrow-left me-1"></i> Voltar às categorias
@@ -80,12 +80,29 @@
     </article>
   </div>
 
-  {{-- Links úteis --}}
-  @if(is_array($item->links) && count($item->links))
+  @php
+    $links = is_array($item->links) ? $item->links : [];
+    $linkReferencia = $links[0] ?? null;
+    $linksUteis = array_slice($links, 1);
+  @endphp
+
+  {{-- Link de Referência --}}
+  @if($linkReferencia)
+    <aside class="card shadow-sm p-3 p-md-4 mb-4">
+      <h3><i class="fa-solid fa-bookmark me-2"></i>Link de referência</h3>
+      <a href="{{ $linkReferencia['url'] ?? '#' }}" target="_blank" rel="noopener">
+        <i class="fa-solid fa-arrow-up-right-from-square me-1"></i>
+        {{ $linkReferencia['titulo'] ?? ($linkReferencia['url'] ?? 'Link') }}
+      </a>
+    </aside>
+  @endif
+
+  {{-- Links úteis (apenas os demais links) --}}
+  @if(count($linksUteis))
     <aside class="card shadow-sm p-3 p-md-4">
       <h3><i class="fa-solid fa-link me-2"></i>Links úteis</h3>
       <ul class="mt-2">
-        @foreach($item->links as $l)
+        @foreach($linksUteis as $l)
           <li>
             <a href="{{ $l['url'] ?? '#' }}" target="_blank" rel="noopener">
               <i class="fa-solid fa-arrow-up-right-from-square me-1"></i>
@@ -102,12 +119,12 @@
 
 @push('scripts')
 <script>
-  // Inicializa Popover do Bootstrap
+  // Inicializa Popover
   document.querySelectorAll('[data-bs-toggle="popover"]').forEach(function (el) {
     new bootstrap.Popover(el, { trigger: 'focus' });
   });
 
-  // Mostra o coachmark fixo
+  // Mostra o coachmark
   (function(){
     const bubble = document.getElementById('hint-educativo-show');
     bubble?.classList.remove('d-none');
