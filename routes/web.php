@@ -118,6 +118,12 @@ Route::group([
         Route::get('/relatorios/estoque/pdf', [RelatorioEstoqueController::class, 'pdf'])
             ->name('relatorios.estoque.pdf');
 
+        Route::get('/precos/pdf', [RelatorioPrecoController::class, 'pdf'])
+            ->name('relatorios.precos.pdf');
+
+        Route::get('/margem/pdf', [RelatorioMargemController::class, 'pdf'])
+            ->name('relatorios.margem.pdf');
+
     });
 
     // (demais rotas internas que exigem usuário logado...)
