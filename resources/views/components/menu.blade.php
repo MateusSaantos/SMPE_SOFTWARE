@@ -74,7 +74,7 @@
       </ul>
     </li>
 
-    <!-- Educativos (MENU PRINCIPAL COM SUBMENU) -->
+    <!-- Educativos -->
     <li class="has-submenu {{ $isOpen(['educativos.*']) }}">
       <div class="menu-item-top">
         <div class="menu-item-label">
@@ -136,6 +136,33 @@
         <li>
           <a class="{{ $isActive('simulacoes-precos.index') }}" href="{{ route('simulacoes-precos.index') }}">
             <i class="fas fa-history"></i> Histórico de simulações
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <!-- >>> ADICIONADO: RELATÓRIOS -->
+    <li class="has-submenu {{ $isOpen(['relatorios.*']) }}">
+      <div class="menu-item-top">
+        <div class="menu-item-label">
+          <i class="fas fa-chart-bar"></i> Relatórios
+        </div>
+        <span class="submenu-icon"><i class="fas fa-chevron-down"></i></span>
+      </div>
+      <ul class="submenu">
+        <li>
+          <a class="{{ $isActive('relatorios.estoque') }}" href="{{ route('relatorios.estoque') }}">
+            <i class="fas fa-warehouse"></i> Estoque
+          </a>
+        </li>
+        <li>
+          <a class="{{ $isActive('relatorios.precos') }}" href="{{ route('relatorios.precos') }}">
+            <i class="fas fa-tags"></i> Preços de venda
+          </a>
+        </li>
+        <li>
+          <a class="{{ $isActive('relatorios.margem') }}" href="{{ route('relatorios.margem') }}">
+            <i class="fas fa-percentage"></i> Margem de lucro
           </a>
         </li>
       </ul>

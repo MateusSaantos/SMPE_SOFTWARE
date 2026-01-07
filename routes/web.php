@@ -12,6 +12,11 @@ use App\Http\Controllers\NotaFiscalItemController;
 use App\Http\Controllers\SimulacaoPrecoController;
 use App\Http\Controllers\EducativosController;
 
+// >>> ADICIONADO: Controllers de Relatórios
+use App\Http\Controllers\RelatorioEstoqueController;
+use App\Http\Controllers\RelatorioPrecoController;
+use App\Http\Controllers\RelatorioMargemController;
+
 // Página inicial redireciona para login ou dashboard
 Route::get('/', function () {
     if (session()->has('usuario')) {
@@ -70,7 +75,7 @@ Route::group([
 
     // Importação de XML de NF-e
     Route::get ('notas/importar-xml',        [NotaFiscalController::class, 'importForm'])->name('notas.import.form');
-    Route::post('notas/importar-xml',        [NotaFiscalController::class, 'importPreview'])->name('notas.import.preview'); // <= muda para preview
+    Route::post('notas/importar-xml',        [NotaFiscalController::class, 'importPreview'])->name('notas.import.preview');
     Route::post('notas/importar-xml/commit', [NotaFiscalController::class, 'importCommit'])->name('notas.import.commit');
 
     // Notas fiscais (resource)
@@ -89,9 +94,31 @@ Route::group([
     Route::delete('/simulacoes-precos/{simulacao}', [SimulacaoPrecoController::class, 'destroy'])->name('simulacoes-precos.destroy');
 
     // Conteúdos educativos
-    Route::get('/educativos',                [EducativosController::class, 'index'])->name('educativos.index');          // categorias
-    Route::get('/educativos/c/{catSlug}',    [EducativosController::class, 'categoryList'])->name('educativos.category'); // itens por categoria
-    Route::get('/educativos/{slug}',         [EducativosController::class, 'show'])->name('educativos.show');            // conteúdo
+    Route::get('/educativos',                [EducativosController::class, 'index'])->name('educativos.index');
+    Route::get('/educativos/c/{catSlug}',    [EducativosController::class, 'categoryList'])->name('educativos.category');
+    Route::get('/educativos/{slug}',         [EducativosController::class, 'show'])->name('educativos.show');
     Route::post('/educativos/{id}/toggle',   [EducativosController::class, 'toggleVisited'])->name('educativos.toggleVisited');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relatórios
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('relatorios')->group(function () {
+
+        Route::get('/estoque', [RelatorioEstoqueController::class, 'index'])
+            ->name('relatorios.estoque');
+
+        Route::get('/precos', [RelatorioPrecoController::class, 'index'])
+            ->name('relatorios.precos');
+
+        Route::get('/margem', [RelatorioMargemController::class, 'index'])
+            ->name('relatorios.margem');
+
+        Route::get('/relatorios/estoque/pdf', [RelatorioEstoqueController::class, 'pdf'])
+            ->name('relatorios.estoque.pdf');
+
+    });
+
     // (demais rotas internas que exigem usuário logado...)
 });
