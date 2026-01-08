@@ -53,6 +53,11 @@
             <i class="fa-solid fa-barcode"></i> NCM
           </a>
         </li>
+        <li>
+          <a class="{{ $isActive('produtos.catalogo') }}" href="{{ route('produtos.catalogo') }}">
+            <i class="fas fa-th-large"></i> Catálogo de produtos
+          </a>
+        </li>
       </ul>
     </li>
 

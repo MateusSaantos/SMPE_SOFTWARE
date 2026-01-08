@@ -163,4 +163,20 @@ class ProdutoController extends Controller
             ->route('produtos.index')
             ->with('success', 'Produto removido.');
     }
+
+    public function catalogo(Request $request)
+    {
+        $q = trim($request->get('q', ''));
+
+        $produtos = Produto::query()
+            ->where('ativo', true)
+            ->when($q !== '', function ($query) use ($q) {
+                $query->where('descricao', 'like', "%{$q}%");
+            })
+            ->orderBy('descricao')
+            ->paginate(12);
+
+        return view('produtos.catalogo', compact('produtos', 'q'));
+    }
+
 }

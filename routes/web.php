@@ -124,6 +124,8 @@ Route::group([
         Route::get('/margem/pdf', [RelatorioMargemController::class, 'pdf'])
             ->name('relatorios.margem.pdf');
 
+        Route::get('/produtos/catalogo', [ProdutoController::class, 'catalogo'])
+            ->name('produtos.catalogo');
     });
 
     // (demais rotas internas que exigem usuário logado...)
