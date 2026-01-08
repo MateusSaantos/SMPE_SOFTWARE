@@ -6,6 +6,7 @@ use App\Models\Produto;
 use App\Models\Categoria;
 use App\Models\Ncm;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProdutoController extends Controller
 {
@@ -40,6 +41,7 @@ class ProdutoController extends Controller
     {
         $categorias = Categoria::orderBy('descricao')->get(['id','descricao']);
         $ncms = Ncm::orderBy('codigo')->get(['id','codigo','descricao']);
+
         return view('produtos.create', compact('categorias', 'ncms'));
     }
 
@@ -61,18 +63,29 @@ class ProdutoController extends Controller
             'cofins'            => 'nullable|numeric|min:0|max:999.99',
             'ativo'             => 'nullable|boolean',
 
-            //novos campos
+            // novos campos
             'origem_mercadoria' => 'required|integer|between:0,8',
             'aliquota_ipi'      => 'nullable|numeric|min:0|max:100',
             'ipi_enquadramento' => 'nullable|regex:/^\d{1,3}$/',
             'estoque_minimo'    => 'nullable|integer|min:0',
+
+            // imagem
+            'imagem'            => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $data['ativo'] = (bool) $request->boolean('ativo');
 
+        // upload da imagem
+        if ($request->hasFile('imagem')) {
+            $data['imagem'] = $request->file('imagem')
+                ->store('produtos', 'public');
+        }
+
         Produto::create($data);
 
-        return redirect()->route('produtos.index')->with('success', 'Produto criado com sucesso.');
+        return redirect()
+            ->route('produtos.index')
+            ->with('success', 'Produto criado com sucesso.');
     }
 
     public function show(Produto $produto)
@@ -85,7 +98,9 @@ class ProdutoController extends Controller
     {
         $categorias = Categoria::orderBy('descricao')->get(['id','descricao']);
         $ncms = Ncm::orderBy('codigo')->get(['id','codigo','descricao']);
+
         $produto->load(['categoria', 'ncmItem']);
+
         return view('produtos.edit', compact('produto', 'categorias', 'ncms'));
     }
 
@@ -107,23 +122,45 @@ class ProdutoController extends Controller
             'cofins'            => 'nullable|numeric|min:0|max:999.99',
             'ativo'             => 'nullable|boolean',
 
-            //novos campos
+            // novos campos
             'origem_mercadoria' => 'required|integer|between:0,8',
             'aliquota_ipi'      => 'nullable|numeric|min:0|max:100',
             'ipi_enquadramento' => 'nullable|regex:/^\d{1,3}$/',
             'estoque_minimo'    => 'nullable|integer|min:0',
+
+            // imagem
+            'imagem'            => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $data['ativo'] = (bool) $request->boolean('ativo');
 
+        // troca da imagem
+        if ($request->hasFile('imagem')) {
+            if ($produto->imagem) {
+                Storage::disk('public')->delete($produto->imagem);
+            }
+
+            $data['imagem'] = $request->file('imagem')
+                ->store('produtos', 'public');
+        }
+
         $produto->update($data);
 
-        return redirect()->route('produtos.index')->with('success', 'Produto atualizado com sucesso.');
+        return redirect()
+            ->route('produtos.index')
+            ->with('success', 'Produto atualizado com sucesso.');
     }
 
     public function destroy(Produto $produto)
     {
+        if ($produto->imagem) {
+            Storage::disk('public')->delete($produto->imagem);
+        }
+
         $produto->delete();
-        return redirect()->route('produtos.index')->with('success', 'Produto removido.');
+
+        return redirect()
+            ->route('produtos.index')
+            ->with('success', 'Produto removido.');
     }
 }

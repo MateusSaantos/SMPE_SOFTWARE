@@ -12,7 +12,9 @@
       <i class="fa-solid fa-box page-head__icon"></i>
       <div>
         <h1 class="page-head__title">Novo Produto</h1>
-        <p class="page-head__subtitle">Cadastre os dados do produto para utilizá-lo nas movimentações.</p>
+        <p class="page-head__subtitle">
+          Cadastre os dados do produto para utilizá-lo nas movimentações.
+        </p>
       </div>
     </div>
 
@@ -34,7 +36,12 @@
         <strong>Você está cadastrando um produto</strong><br>
         Selecione a <em>Categoria</em> e o <em>NCM</em>, informe os preços e impostos.
       </div>
-      <button type="button" class="btn btn-sm btn-outline-secondary hint-bubble__close" id="hint-close" style="display:none;">Entendi</button>
+      <button type="button"
+              class="btn btn-sm btn-outline-secondary hint-bubble__close"
+              id="hint-close"
+              style="display:none;">
+        Entendi
+      </button>
     </div>
     <span class="hint-bubble__arrow"></span>
   </div>
@@ -50,15 +57,24 @@
   <form method="POST"
         action="{{ route('produtos.store') }}"
         class="needs-validation mt-3"
-        novalidate>
+        novalidate
+        enctype="multipart/form-data">
+        
     @include('produtos.form')
   </form>
 </div>
 
 @push('scripts')
 <script>
-  document.querySelectorAll('[data-bs-toggle="popover"]').forEach(el => new bootstrap.Popover(el, { trigger: 'focus' }));
-  (function(){ document.getElementById('hint-cadastro-produto')?.classList.remove('d-none'); })();
+  document
+    .querySelectorAll('[data-bs-toggle="popover"]')
+    .forEach(el => new bootstrap.Popover(el, { trigger: 'focus' }));
+
+  (function () {
+    document
+      .getElementById('hint-cadastro-produto')
+      ?.classList.remove('d-none');
+  })();
 </script>
 @endpush
 @endsection

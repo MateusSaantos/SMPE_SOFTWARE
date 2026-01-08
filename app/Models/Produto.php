@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Produto extends Model
 {
@@ -11,6 +12,7 @@ class Produto extends Model
     protected $fillable = [
         'descricao',
         'codigo_barras',
+        'imagem', // ✅ NOVO
         'categoria_produto',
         'margem_lucro',
         'cest',
@@ -24,7 +26,7 @@ class Produto extends Model
         'cofins',
         'ativo',
 
-        //campos adicionados
+        // campos adicionados
         'origem_mercadoria',
         'aliquota_ipi',
         'ipi_enquadramento',
@@ -40,16 +42,32 @@ class Produto extends Model
         'cofins'            => 'decimal:2',
         'ativo'             => 'boolean',
 
-        //casts dos novos campos
         'origem_mercadoria' => 'integer',
         'aliquota_ipi'      => 'decimal:2',
         'estoque_minimo'    => 'integer',
     ];
 
     /*
-    |--------------------------------------------------------------------------
-    | Normalizações leves
-    |--------------------------------------------------------------------------
+    |------------------------------------------------------------------
+    | Accessors
+    |------------------------------------------------------------------
+    */
+
+    // URL completa da imagem do produto
+    public function getImagemUrlAttribute()
+    {
+        if ($this->imagem && Storage::disk('public')->exists('produtos/' . $this->imagem)) {
+            return asset('storage/produtos/' . $this->imagem);
+        }
+
+        // imagem padrão (opcional)
+        return asset('images/produto-sem-imagem.png');
+    }
+
+    /*
+    |------------------------------------------------------------------
+    | Normalizações
+    |------------------------------------------------------------------
     */
     public function setCodigoBarrasAttribute($value)
     {
@@ -63,7 +81,6 @@ class Produto extends Model
         $this->attributes['cest'] = $v === '' ? null : preg_replace('/\D+/', '', $v);
     }
 
-    //mantém apenas dígitos no enquadramento do IPI; aceita null/''.
     public function setIpiEnquadramentoAttribute($value)
     {
         $v = trim((string) $value);
@@ -71,16 +88,15 @@ class Produto extends Model
     }
 
     /*
-    |--------------------------------------------------------------------------
+    |------------------------------------------------------------------
     | Relacionamentos
-    |--------------------------------------------------------------------------
+    |------------------------------------------------------------------
     */
     public function categoria()
     {
         return $this->belongsTo(\App\Models\Categoria::class, 'categoria_produto');
     }
 
-    // evitar conflito com coluna 'ncm' (id) — nomeamos a relação como ncmItem
     public function ncmItem()
     {
         return $this->belongsTo(\App\Models\Ncm::class, 'ncm');

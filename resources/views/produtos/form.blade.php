@@ -11,6 +11,41 @@
   </div>
 
   <div class="card-body">
+
+      {{-- ================= IMAGEM DO PRODUTO ================= --}}
+    <div class="mb-4">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <i class="fa-solid fa-image"></i>
+        <h5 class="m-0">Imagem do Produto</h5>
+      </div>
+
+      @if(isset($produto) && $produto->imagem)
+        <div class="mb-2">
+          <img
+            src="{{ asset('storage/produtos/'.$produto->imagem) }}"
+            alt="Imagem do produto"
+            style="max-height:150px"
+            class="img-thumbnail">
+        </div>
+      @endif
+
+      <input
+        type="file"
+        name="imagem"
+        class="form-control"
+        accept="image/*"
+        onchange="previewImagem(event)">
+
+      <div class="form-text">
+        JPG, PNG ou WEBP. Máx. 2MB.
+      </div>
+
+      <img id="previewImagem"
+           class="img-thumbnail mt-2"
+           style="max-height:150px; display:none;">
+    </div>
+
+    
     {{-- Dados do Produto --}}
     <div class="d-flex align-items-center gap-2 mb-2">
       <i class="fa-solid fa-tags"></i>
